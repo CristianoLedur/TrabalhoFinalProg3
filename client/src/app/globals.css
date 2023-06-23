@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+body, html {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+main {
+  min-height: calc(100vh - 64px - 181px);
+  height: 100%;
+  width: 100%;
+}
+
+/* .teste {
+  color:#eff6ff;
+  color: #dbeafe;
+  color:#bfdbfe;
+  color: #93c5fd;
+  color: #60a5fa;
+  color: #3b82f6;
+  color: #2563eb;
+  color: #1d4ed8;
+  color: #1e40af;
+  color:#1e3a8a;
+}  */
