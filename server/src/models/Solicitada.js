@@ -1,6 +1,6 @@
 import Sequelize, { Model } from 'sequelize';
 
-class DemandaSolicitada extends Model {
+class Solicitada extends Model {
 
     static init(sequelize) {
         super.init(
@@ -25,8 +25,8 @@ class DemandaSolicitada extends Model {
         
         /* Relacionar com uma ou várias cidades */ 
         this.belongsToMany(models.Cidade, {
-            through: 'demandasolicitadacidade',
-            foreignKey: 'demandaSolicitadaId',
+            through: 'solicitadacidade',
+            foreignKey: 'solicitadaId',
             as: 'cidade',
         });
 
@@ -35,4 +35,4 @@ class DemandaSolicitada extends Model {
     }
 }
 
-export default DemandaSolicitada;
+export default Solicitada;

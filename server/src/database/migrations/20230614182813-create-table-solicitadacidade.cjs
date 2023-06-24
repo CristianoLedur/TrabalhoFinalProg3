@@ -2,17 +2,17 @@
 
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('demandasugeridacidade', {
+    await queryInterface.createTable('solicitadacidade', {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
       },
-      demandaSugeridaId: {
+      solicitadaId: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'demandasugerida',
+          model: 'solicitada',
           key: 'id'
         },
         onUpdate: 'CASCADE',
@@ -26,7 +26,7 @@ module.exports = {
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
-        allowNull: true,
+        allowNull: true
       },
       createdAt: {
         allowNull: false,
@@ -40,6 +40,6 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('demandasugeridacidade');
+    await queryInterface.dropTable('solicitadacidade');
   }
 };

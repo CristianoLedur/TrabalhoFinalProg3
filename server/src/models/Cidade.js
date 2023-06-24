@@ -18,16 +18,16 @@ class Cidade extends Model {
 
     static associate(models) {
         
-        this.belongsToMany(models.DemandaSugerida, {
-            through: 'demandasugeridacidade',
+        this.belongsToMany(models.Sugerida, {
+            through: 'sugeridacidade',
             foreignKey: 'cidadeId',
-            as: 'demandasugerida',
+            as: 'sugerida',
         });
 
-        this.belongsToMany(models.DemandaSolicitada, {
-            through: 'demandasolicitadacidade',
+        this.belongsToMany(models.Solicitada, {
+            through: 'solicitadacidade',
             foreignKey: 'cidadeId',
-            as: 'demandasolicitada',
+            as: 'solicitada',
         });
 
         this.belongsToMany(models.Atividade, {

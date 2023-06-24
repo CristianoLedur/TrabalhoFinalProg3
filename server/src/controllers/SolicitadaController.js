@@ -1,19 +1,19 @@
-import DemandaSugerida from '../models/DemandaSugerida.js';
+import Solicitada from '../models/Solicitada.js';
 import User from '../models/User.js';
 import Cidade from '../models/Cidade.js';
 import Atividade from '../models/Atividade.js';
 import * as Yup from 'yup';
 
-class DemandaSugeridaController {
+class SolicitadaController {
 
     async index(req, res) {
-        let demandas = await DemandaSugerida.findAll({
-            attributes:['id', 'titulo', 'descricao', 'status', 'modalidade', 'diasEturnos', 'categoria', 'quantidadeInteressados', 'comentario', 'createdAt', 'updatedAt'],
+        let demandas = await Solicitada.findAll({
+            attributes:['id', 'titulo', 'observacao', 'status', 'quantidadeInteressados', 'comentario', 'createdAt', 'updatedAt'],
             include: [ 
                 {
                     model: User,
                     as: 'user',
-                    attributes:['id', 'nome', 'email']
+                    attributes:['id','nome', 'email']
                 },
                 {
                     model: Cidade,
@@ -25,10 +25,8 @@ class DemandaSugeridaController {
                 {
                     model: Atividade,
                     as: 'atividade',
-                    through: {
-                        attributes: []
-                    }
-                }, 
+                    attributes:['id','titulo', 'descricao']
+                },  
             ]
         });
         return res.json( demandas );
@@ -46,13 +44,13 @@ class DemandaSugeridaController {
 
         const { id } = req.query;
 
-        let demanda = await DemandaSugerida.findOne({
+        let demanda = await Solicitada.findOne({
             where: { id },
             include: [ 
                 {
                     model: User,
                     as: 'user',
-                    attributes:['id', 'nome', 'email']
+                    attributes:['id','nome', 'email']
                 },
                 {
                     model: Cidade,
@@ -64,10 +62,9 @@ class DemandaSugeridaController {
                 {
                     model: Atividade,
                     as: 'atividade',
-                    through: {
-                        attributes: []
-                    }
-                }, 
+                    attributes:['id','titulo', 'descricao']
+                    
+                },
             ]
         });
 
@@ -79,15 +76,11 @@ class DemandaSugeridaController {
         const schema = Yup.object().shape({
             status: Yup.string().required(),
             titulo: Yup.string().required(),
-            descricao: Yup.string().required(),
-            modalidade: Yup.string().required(),
-            diasEturnos: Yup.string().required(),
-            categoria: Yup.string().required(),
+            observacao: Yup.string().required(),
             quantidadeInteressados: Yup.number().required(),
-            comentario: Yup.string(),
             userId: Yup.number().required(),
             cidadeId: Yup.number(),
-            atividadeId: Yup.number(),
+            atividadeId: Yup.number().required(),
         }); 
 
         if(!(await schema.isValid(req.body))) {
@@ -96,27 +89,24 @@ class DemandaSugeridaController {
 
         const { cidade } = req.body;
 
-        const { status, titulo, descricao, modalidade, categoria, diasEturnos, quantidadeInteressados, comentario, userId, atividadeId } = req.body; 
+        const { status, titulo, observacao, quantidadeInteressados, comentario, userId, atividadeId } = req.body; 
 
-        let demanda = await DemandaSugerida.findAll({
+        let demanda = await Solicitada.findAll({
             where: { titulo }
         });
 
         if( !demanda || demanda.length == 0 ) {
-            demanda = await DemandaSugerida.create( {
+            demanda = await Solicitada.create( {
                 status,
                 titulo,
-                descricao,
-                modalidade,
-                categoria,
-                diasEturnos,
+                observacao,
                 quantidadeInteressados,
                 comentario,
                 userId,
-                atividadeId,
+                atividadeId
             });
         }
-        
+
         if( cidade && cidade.length > 0 ) {
             demanda.setCidade(cidade);
         }
@@ -135,39 +125,35 @@ class DemandaSugeridaController {
 
         const schema = Yup.object().shape({
             status: Yup.string().required(),
-            titulo: Yup.string().required(),
-            observacao: Yup.string().required(),
-            modalidade: Yup.string().required(),
-            diasEturnos: Yup.string().required(),
+            titulo: Yup.string(),
+            observacao: Yup.string(),
             quantidadeInteressados: Yup.number().required(),
             comentario: Yup.string(),
             userId: Yup.number().required(),
             cidadeId: Yup.number(),
-            idAtividade: Yup.number(),
+            atividadeId: Yup.number().required(),
         }); 
 
         if(!(await schema.isValid(req.body))) {
             return res.status(400).json({ error:'Schema is not valid.' });
         }
 
-
         const { id } = req.params;
         const { cidade } = req.body;
-        const { status, titulo, observacao, modalidade, diasEturnos, quantidadeInteressados, comentario, userId, idAtividade } = req.body; 
+
+        const { status, titulo, observacao, quantidadeInteressados, comentario, userId, atividadeId } = req.body; 
 
         const dados = {
             status,
             titulo,
             observacao,
-            modalidade,
-            diasEturnos,
             quantidadeInteressados,
             comentario,
             userId,
-            idAtividade
+            atividadeId
         }
 
-        const demanda = await DemandaSugerida.findByPk(id, {
+        const demanda = await Solicitada.findByPk(id, {
             include: [
                 {
                     model: User,
@@ -184,9 +170,7 @@ class DemandaSugeridaController {
                 {
                     model: Atividade,
                     as: 'atividade',
-                    through: {
-                        attributes: []
-                    }
+                    attributes:['id','titulo', 'descricao']
                 }
             ]
         });
@@ -215,7 +199,7 @@ class DemandaSugeridaController {
 
         const { id } = req.params;
 
-        await DemandaSugerida.destroy({
+        await Solicitada.destroy({
             where: { id }
         });
 
@@ -223,4 +207,4 @@ class DemandaSugeridaController {
     }
 }
 
-export default new DemandaSugeridaController();
+export default new SolicitadaController();

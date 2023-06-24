@@ -2,7 +2,7 @@
 
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('demandasolicitada', {
+    await queryInterface.createTable('sugerida', {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -11,12 +11,13 @@ module.exports = {
       },
       status: {
         type: Sequelize.ENUM('Aceita', 'Em avaliação', 'A reformular', 'Cancelada'),
+        allowNull: false,
       },
       titulo: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      observacao: {
+      descricao: {
         type: Sequelize.STRING,
         allowNull: false,
       },
@@ -24,9 +25,21 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
+      modalidade: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      categoria: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
       comentario: {
         type: Sequelize.STRING,
         allowNull: true,
+      },
+      diasEturnos: {
+        type: Sequelize.STRING,
+        allowNull: false,
       },
       userId: {
         type: Sequelize.INTEGER,
@@ -38,16 +51,6 @@ module.exports = {
         onDelete: 'CASCADE',
         allowNull: false, 
       },
-      cidadeId: {
-        type: Sequelize.INTEGER,
-        references: { 
-          model: 'cidade',
-          key: 'id'
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
-        allowNull: true, 
-      },
       atividadeId: {
         type: Sequelize.INTEGER,
         references: {
@@ -56,7 +59,17 @@ module.exports = {
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
-        allowNull: false,
+        allowNull: true,
+      },
+      cidadeId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'cidade',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+        allowNull: true,
       },
       createdAt: {
         type: Sequelize.DATE,
@@ -70,6 +83,6 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('demandasolicitada');
+    await queryInterface.dropTable('sugerida');
   }
 };

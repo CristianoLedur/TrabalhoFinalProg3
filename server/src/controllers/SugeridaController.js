@@ -1,36 +1,32 @@
-import DemandaSolicitada from '../models/DemandaSolicitada.js';
+import Sugerida from '../models/Sugerida.js';
 import User from '../models/User.js';
 import Cidade from '../models/Cidade.js';
 import Atividade from '../models/Atividade.js';
 import * as Yup from 'yup';
 
-class DemandaSolicitadaController {
+class SugeridaController {
 
     async index(req, res) {
-        let demandas = await DemandaSolicitada.findAll({
-            attributes:['id', 'titulo', 'observacao', 'status', 'quantidadeInteressados', 'comentario', 'createdAt', 'updatedAt'],
+        let demandas = await Sugerida.findAll({
+            attributes:['id', 'titulo', 'descricao', 'status', 'modalidade', 'diasEturnos', 'categoria', 'quantidadeInteressados', 'comentario', 'createdAt', 'updatedAt'],
             include: [ 
                 {
                     model: User,
                     as: 'user',
-                    through: {
-                        attributes:['id','nome', 'email']
-                    }
+                    attributes:['id','nome', 'email']
                 },
+                {
+                    model: Atividade,
+                    as: 'atividade',
+                    attributes:['id','titulo', 'descricao']
+                }, 
                 {
                     model: Cidade,
                     as: 'cidade',
                     through: {
                         attributes: []
                     }
-                },
-                {
-                    model: Atividade,
-                    as: 'atividade',
-                    through: {
-                        attributes: []
-                    }
-                },  
+                }
             ]
         });
         return res.json( demandas );
@@ -48,13 +44,14 @@ class DemandaSolicitadaController {
 
         const { id } = req.query;
 
-        let demanda = await DemandaSolicitada.findAll({
+        let demanda = await Sugerida.findOne({
+            attributes:['id', 'titulo', 'descricao', 'status', 'modalidade', 'diasEturnos', 'categoria', 'quantidadeInteressados', 'comentario', 'createdAt', 'updatedAt'],
             where: { id },
             include: [ 
                 {
                     model: User,
                     as: 'user',
-                    attributes:['id','nome', 'email']
+                    attributes:['id', 'nome', 'email']
                 },
                 {
                     model: Cidade,
@@ -66,11 +63,8 @@ class DemandaSolicitadaController {
                 {
                     model: Atividade,
                     as: 'atividade',
-                    through: {
-                        attributes: []
-                    }
-                    
-                },
+                    attributes:['id','titulo', 'descricao']
+                }, 
             ]
         });
 
@@ -82,11 +76,12 @@ class DemandaSolicitadaController {
         const schema = Yup.object().shape({
             status: Yup.string().required(),
             titulo: Yup.string().required(),
-            observacao: Yup.string().required(),
+            descricao: Yup.string().required(),
+            modalidade: Yup.string().required(),
+            diasEturnos: Yup.string().required(),
+            categoria: Yup.string().required(),
             quantidadeInteressados: Yup.number().required(),
-            comentario: Yup.string(),
             userId: Yup.number().required(),
-            atividadeId: Yup.number().required(),
         }); 
 
         if(!(await schema.isValid(req.body))) {
@@ -94,24 +89,28 @@ class DemandaSolicitadaController {
         }
 
         const { cidade } = req.body;
-        const { status, titulo, observacao, quantidadeInteressados, comentario, userId, atividadeId } = req.body; 
 
-        let demanda = await DemandaSolicitada.findAll({
+        const { status, titulo, descricao, modalidade, categoria, diasEturnos, quantidadeInteressados, comentario, userId, atividadeId } = req.body; 
+
+        let demanda = await Sugerida.findAll({
             where: { titulo }
         });
 
         if( !demanda || demanda.length == 0 ) {
-            demanda = await DemandaSolicitada.create( {
+            demanda = await Sugerida.create( {
                 status,
                 titulo,
-                observacao,
+                descricao,
+                modalidade,
+                categoria,
+                diasEturnos,
                 quantidadeInteressados,
                 comentario,
                 userId,
-                atividadeId,
+                atividadeId
             });
         }
-
+        
         if( cidade && cidade.length > 0 ) {
             demanda.setCidade(cidade);
         }
@@ -130,33 +129,36 @@ class DemandaSolicitadaController {
 
         const schema = Yup.object().shape({
             status: Yup.string().required(),
-            titulo: Yup.string(),
-            observacao: Yup.string(),
+            titulo: Yup.string().required(),
+            descricao: Yup.string().required(),
+            modalidade: Yup.string().required(),
+            diasEturnos: Yup.string().required(),
             quantidadeInteressados: Yup.number().required(),
-            comentario: Yup.string(),
             userId: Yup.number().required(),
-            atividadeId: Yup.number().required(),
         }); 
 
         if(!(await schema.isValid(req.body))) {
             return res.status(400).json({ error:'Schema is not valid.' });
         }
 
+
         const { id } = req.params;
         const { cidade } = req.body;
-        const { status, titulo, observacao, quantidadeInteressados, comentario, userId, atividadeId } = req.body; 
+        const { status, titulo, descricao, modalidade, diasEturnos, quantidadeInteressados, comentario, userId, atividadeId } = req.body; 
 
         const dados = {
             status,
             titulo,
-            observacao,
+            descricao,
+            modalidade,
+            diasEturnos,
             quantidadeInteressados,
             comentario,
             userId,
             atividadeId
         }
 
-        const demanda = await DemandaSolicitada.findByPk(id, {
+        const demanda = await Sugerida.findByPk(id, {
             include: [
                 {
                     model: User,
@@ -173,9 +175,7 @@ class DemandaSolicitadaController {
                 {
                     model: Atividade,
                     as: 'atividade',
-                    through: {
-                        attributes: []
-                    }
+                    attributes:['id','titulo', 'descricao']
                 }
             ]
         });
@@ -204,7 +204,7 @@ class DemandaSolicitadaController {
 
         const { id } = req.params;
 
-        await DemandaSolicitada.destroy({
+        await Sugerida.destroy({
             where: { id }
         });
 
@@ -212,4 +212,4 @@ class DemandaSolicitadaController {
     }
 }
 
-export default new DemandaSolicitadaController();
+export default new SugeridaController();

@@ -14,8 +14,6 @@ class UserController {
                     as: 'cidade',
                     attributes:['id','nome', 'estado']
                 },
-                /* atividade */
-                /* demanda */
             ]
             
         });

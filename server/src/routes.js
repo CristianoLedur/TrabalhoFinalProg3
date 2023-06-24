@@ -3,8 +3,8 @@ import { Router } from 'express';
 import authMiddleware from './middlewares/auth.js';
 import UserController from './controllers/UserController.js';
 import AtividadeController from './controllers/AtividadeController.js';
-import DemandaSolicitadaController from './controllers/DemandaSolicitadaController.js';
-import DemandaSugeridaController from './controllers/DemandaSugeridaController.js';
+import SolicitadaController from './controllers/SolicitadaController.js';
+import SugeridaController from './controllers/SugeridaController.js';
 import SessionController from './controllers/SessionController.js';
 import CidadeController from './controllers/CidadeController.js';
 
@@ -40,17 +40,17 @@ routes.put('/atividade/:id', AtividadeController.update);
 routes.delete('/atividade/:id', AtividadeController.destroy);
 
 // Demandas Sugeridas
-routes.get('/demandas-sugeridas', DemandaSugeridaController.index);
-routes.get('/demanda-sugerida', DemandaSugeridaController.show);
-routes.post('/demanda-sugerida', DemandaSugeridaController.store);
-routes.put('/demanda-sugerida/:id', DemandaSugeridaController.update);
-routes.delete('/demanda-sugerida/:id', DemandaSugeridaController.destroy);
+routes.get('/demandas-sugeridas', SugeridaController.index);
+routes.get('/demanda-sugerida', SugeridaController.show);
+routes.post('/demanda-sugerida', SugeridaController.store);
+routes.put('/demanda-sugerida/:id', SugeridaController.update);
+routes.delete('/demanda-sugerida/:id', SugeridaController.destroy);
 
 // Demandas Solicitadas
-routes.get('/demandas-solicitadas', DemandaSolicitadaController.index);
-routes.get('/demanda-solicitada', DemandaSolicitadaController.show);
-routes.post('/demanda-solicitada', DemandaSolicitadaController.store);
-routes.put('/demanda-solicitada/:id', DemandaSolicitadaController.update);
-routes.delete('/demanda-solicitada/:id', DemandaSolicitadaController.destroy);
+routes.get('/demandas-solicitadas', SolicitadaController.index);
+routes.get('/demanda-solicitada', SolicitadaController.show);
+routes.post('/demanda-solicitada', SolicitadaController.store);
+routes.put('/demanda-solicitada/:id', SolicitadaController.update);
+routes.delete('/demanda-solicitada/:id', SolicitadaController.destroy);
 
 export default routes;
