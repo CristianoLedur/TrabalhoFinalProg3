@@ -3,8 +3,8 @@ import './globals.css';
 import HeaderOff from '../components/HeaderOff';
 import Dashboard from '../components/Dashboard';
 import Footer from '../components/Footer';
-import { useContext } from 'react';
-import AuthContext from '../contexts/AuthContext.js';
+import { useContext, useEffect } from 'react';
+import AuthContext, { AuthProvider } from './Context/AuthContext.js';
 import { Inter } from 'next/font/google';
 
 const inter = Inter({ subsets: ['latin'] })
@@ -20,10 +20,34 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
+        <AuthProvider>
           {isAuthenticated ? <Dashboard /> : <HeaderOff />}
           <main className="pb-5 mt-[61px]">{children}</main>
           <Footer />
+        </AuthProvider>
       </body>
     </html>
   )
+}
+
+export const getServerSideProps = async ({req, res}) => {
+  try {
+    const token = getCookie('authorization', { req, res })
+    console.log(token);
+    if(!token) throw new Error('Token inválido')
+
+    verifica(token);
+    return {
+      props: {}
+    }
+  } catch (err) {
+
+    return {
+      redirect: {
+        permanent: false,
+        destination: '/'
+      },
+      props: {}
+    }
+  }
 }

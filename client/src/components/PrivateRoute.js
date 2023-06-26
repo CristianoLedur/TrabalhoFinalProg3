@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { useRouter } from 'next/router';
-import { AuthContext } from '../contexts/AuthContext';
+import { AuthContext } from '../app/Context/AuthContext';
 
 export default function PrivateRoute({ children }) {
   const { isAuthenticated } = useContext(AuthContext);

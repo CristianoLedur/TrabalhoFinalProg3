@@ -24,18 +24,10 @@ export default function UserDropdown(props) {
             >
                 <li>
                     <a
-                        href="#"
+                        href="/perfil"
                         className="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-400 dark:hover:text-white"
                     >
                         Ver perfil
-                    </a>
-                </li>
-                <li>
-                    <a
-                        href="#"
-                        className="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-400 dark:hover:text-white"
-                    >
-                        Account settings
                     </a>
                 </li>
             </ul>
@@ -45,7 +37,7 @@ export default function UserDropdown(props) {
             >
                 <li>
                     <a
-                        href="#"
+                        href="/minhas-demandas"
                         className="flex items-center py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                     >
                         <svg
@@ -67,7 +59,7 @@ export default function UserDropdown(props) {
                 </li>
                 <li>
                     <a
-                        href="#"
+                        href="/minhas-atividades"
                         className="flex items-center py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                     >
                         <svg

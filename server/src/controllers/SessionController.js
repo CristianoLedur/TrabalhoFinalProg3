@@ -5,8 +5,6 @@ import authConfig from '../config/auth.js';
 class SessionController {
     async store(req, res) {
         const { email, password } = req.body;
-        console.log(email);
-        console.log(password);
 
         //Email existe?
         const user = await User.findOne({ where : { email } });

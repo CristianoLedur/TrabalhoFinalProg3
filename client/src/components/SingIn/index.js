@@ -1,22 +1,52 @@
 'use client'
 import React, { useState, useContext } from "react";
-import AuthContext from '../../contexts/AuthContext';
+import AuthContext from '../../app/Context/AuthContext';
+import { setCookie } from "cookies-next";
+import { useRouter } from 'next/navigation'
 
 export default function SignIn(props) {
     const [ email, setEmail ] = useState('');
     const [ password, setPassword ] = useState('');
-    const { signIn } = useContext(AuthContext);
+    const [user, setUser] = useState(null);
+    const [tipoUsuario, setTipoUsuario] = useState(null);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const router = useRouter();
 
-    const handleSubmit = (event) => {
+    const handleSignIn = async (event) => {
         event.preventDefault();
-        handleSignIn();
-    }
-
-    async function handleSignIn() {
         try {
-            await signIn({ email, password });
+            const response = await fetch('http://localhost:3001/session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                console.log("ok")
+                const { token, user } = data;
+                // Armazenar o token e as informações do usuário no estado local
+                localStorage.setItem('token', token);
+                localStorage.setItem('user', JSON.stringify(user));
+
+                setUser(user);
+                setTipoUsuario(user.tipoUsuario);
+                setIsAuthenticated(true);
+                setCookie('Autorization', token)
+
+                router.push('/');
+            } else {
+                // Tratar o erro de autenticação
+                console.log(data.error);
+            } 
         } catch (error) {
-            // Tratar erros
+            // Tratar outros erros
             console.log(error);
         }
     }
@@ -60,7 +90,7 @@ export default function SignIn(props) {
                         </h1>
                         <form 
                             className="space-y-4 md:space-y-6" 
-                            onSubmit={handleSubmit}
+                            onSubmit={handleSignIn}
                             method="POST"
                         >
                             <div>

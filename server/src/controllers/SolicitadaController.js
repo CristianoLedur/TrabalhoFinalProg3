@@ -8,7 +8,7 @@ class SolicitadaController {
 
     async index(req, res) {
         let demandas = await Solicitada.findAll({
-            attributes:['id', 'titulo', 'observacao', 'status', 'quantidadeInteressados', 'comentario', 'createdAt', 'updatedAt'],
+            attributes:['id', 'titulo', 'observacao', 'status', 'quantidadeInteressados', 'comentario', 'tipoDemanda', 'createdAt', 'updatedAt'],
             include: [ 
                 {
                     model: User,
@@ -78,6 +78,7 @@ class SolicitadaController {
             titulo: Yup.string().required(),
             observacao: Yup.string().required(),
             quantidadeInteressados: Yup.number().required(),
+            tipoDemanda: Yup.string().required(),
             userId: Yup.number().required(),
             cidadeId: Yup.number(),
             atividadeId: Yup.number().required(),
@@ -89,10 +90,11 @@ class SolicitadaController {
 
         const { cidade } = req.body;
 
-        const { status, titulo, observacao, quantidadeInteressados, comentario, userId, atividadeId } = req.body; 
+        const { status, titulo, observacao, quantidadeInteressados, comentario, tipoDemanda, userId, atividadeId } = req.body; 
 
+        /* verificar se usuário possuiu mais de uma atividade com este titulo */
         let demanda = await Solicitada.findAll({
-            where: { titulo }
+            where: { titulo, userId }
         });
 
         if( !demanda || demanda.length == 0 ) {
@@ -102,6 +104,7 @@ class SolicitadaController {
                 observacao,
                 quantidadeInteressados,
                 comentario,
+                tipoDemanda,
                 userId,
                 atividadeId
             });
@@ -129,6 +132,7 @@ class SolicitadaController {
             observacao: Yup.string(),
             quantidadeInteressados: Yup.number().required(),
             comentario: Yup.string(),
+            tipoDemanda: Yup.string().required(),
             userId: Yup.number().required(),
             cidadeId: Yup.number(),
             atividadeId: Yup.number().required(),
@@ -141,7 +145,7 @@ class SolicitadaController {
         const { id } = req.params;
         const { cidade } = req.body;
 
-        const { status, titulo, observacao, quantidadeInteressados, comentario, userId, atividadeId } = req.body; 
+        const { status, titulo, observacao, quantidadeInteressados, comentario, tipoDemanda, userId, atividadeId } = req.body; 
 
         const dados = {
             status,
@@ -149,6 +153,7 @@ class SolicitadaController {
             observacao,
             quantidadeInteressados,
             comentario,
+            tipoDemanda,
             userId,
             atividadeId
         }

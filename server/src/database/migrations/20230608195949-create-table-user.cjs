@@ -24,7 +24,7 @@ module.exports = {
         allowNull: false,
       },
       status: {
-        type: Sequelize.ENUM('ativo', 'inativo'),
+        type: Sequelize.ENUM('online', 'offline'),
       },
       tipoUsuario: {
         type: Sequelize.STRING,

@@ -57,7 +57,7 @@ export default function SingUp(props) {
                     nome: nome,
                     email: email,
                     password: password,
-                    status: "ativo",
+                    status: "online",
                     tipoUsuario: tipoUsuario,
                     cidadeId: cidadeId,
                 }),

@@ -1,5 +1,8 @@
 import User from '../models/User.js';
 import Cidade from '../models/Cidade.js';
+import Atividade from '../models/Atividade.js';
+import Sugerida from '../models/Sugerida.js';
+import Solicitada from '../models/Solicitada.js';
 import * as Yup from 'yup';
 
 class UserController {
@@ -14,6 +17,21 @@ class UserController {
                     as: 'cidade',
                     attributes:['id','nome', 'estado']
                 },
+                {
+                    model: Atividade,
+                    as: 'atividade',
+                    attributes:['id','titulo', 'modalidade', 'categoria', 'updatedAt', 'status']
+                },
+                {
+                    model: Sugerida,
+                    as: 'sugerida',
+                    attributes:['id','titulo', 'tipoDemanda', 'updatedAt', 'status']
+                },
+                {
+                    model: Solicitada,
+                    as: 'solicitada',
+                    attributes:['id','titulo', 'tipoDemanda', 'updatedAt', 'status']
+                }
             ]
             
         });
@@ -43,8 +61,21 @@ class UserController {
                     as: 'cidade',
                     attributes:['id','nome', 'estado']
                 },
-                /* atividade */
-                /* demanda */
+                {
+                    model: Atividade,
+                    as: 'atividade',
+                    attributes:['id','titulo', 'modalidade', 'categoria', 'updatedAt', 'status']
+                },
+                {
+                    model: Sugerida,
+                    as: 'sugerida',
+                    attributes:['id','titulo', 'tipoDemanda', 'updatedAt', 'status']
+                },
+                {
+                    model: Solicitada,
+                    as: 'solicitada',
+                    attributes:['id','titulo', 'tipoDemanda', 'updatedAt', 'status']
+                }
             ]
             
         });

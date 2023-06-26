@@ -10,7 +10,7 @@ class User extends Model {
                 email: Sequelize.STRING,
                 password: Sequelize.VIRTUAL,
                 password_hash: Sequelize.STRING,
-                status: Sequelize.ENUM('ativo', 'inativo'),
+                status: Sequelize.ENUM('online', 'offline'),
                 tipoUsuario: Sequelize.STRING,
             },
             {
@@ -35,6 +35,9 @@ class User extends Model {
     static associate(models) {
         /* Relacionar com uma ou várias cidades */
         this.belongsTo(models.Cidade, {foreignKey: 'cidadeId', as: 'cidade'});
+        this.hasMany(models.Atividade, {foreignKey: 'userId', as: 'atividade'});
+        this.hasMany(models.Sugerida, {foreignKey: 'userId', as: 'sugerida'});
+        this.hasMany(models.Solicitada, {foreignKey: 'userId', as: 'solicitada'});
     }
 }
 

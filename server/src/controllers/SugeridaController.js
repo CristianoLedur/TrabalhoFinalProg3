@@ -8,7 +8,7 @@ class SugeridaController {
 
     async index(req, res) {
         let demandas = await Sugerida.findAll({
-            attributes:['id', 'titulo', 'descricao', 'status', 'modalidade', 'diasEturnos', 'categoria', 'quantidadeInteressados', 'comentario', 'createdAt', 'updatedAt'],
+            attributes:['id', 'titulo', 'descricao', 'status', 'modalidade', 'diasEturnos', 'categoria', 'quantidadeInteressados', 'comentario', 'tipoDemanda', 'createdAt', 'updatedAt'],
             include: [ 
                 {
                     model: User,
@@ -45,7 +45,7 @@ class SugeridaController {
         const { id } = req.query;
 
         let demanda = await Sugerida.findOne({
-            attributes:['id', 'titulo', 'descricao', 'status', 'modalidade', 'diasEturnos', 'categoria', 'quantidadeInteressados', 'comentario', 'createdAt', 'updatedAt'],
+            attributes:['id', 'titulo', 'descricao', 'status', 'modalidade', 'diasEturnos', 'categoria', 'quantidadeInteressados', 'comentario', 'tipoDemanda', 'createdAt', 'updatedAt'],
             where: { id },
             include: [ 
                 {
@@ -81,6 +81,7 @@ class SugeridaController {
             diasEturnos: Yup.string().required(),
             categoria: Yup.string().required(),
             quantidadeInteressados: Yup.number().required(),
+            tipoDemanda: Yup.string().required(),
             userId: Yup.number().required(),
         }); 
 
@@ -89,8 +90,7 @@ class SugeridaController {
         }
 
         const { cidade } = req.body;
-
-        const { status, titulo, descricao, modalidade, categoria, diasEturnos, quantidadeInteressados, comentario, userId, atividadeId } = req.body; 
+        const { status, titulo, descricao, modalidade, categoria, diasEturnos, quantidadeInteressados, comentario, tipoDemanda, userId, atividadeId } = req.body; 
 
         let demanda = await Sugerida.findAll({
             where: { titulo }
@@ -106,6 +106,7 @@ class SugeridaController {
                 diasEturnos,
                 quantidadeInteressados,
                 comentario,
+                tipoDemanda,
                 userId,
                 atividadeId
             });
@@ -134,6 +135,7 @@ class SugeridaController {
             modalidade: Yup.string().required(),
             diasEturnos: Yup.string().required(),
             quantidadeInteressados: Yup.number().required(),
+            tipoDemanda: Yup.string().required(),
             userId: Yup.number().required(),
         }); 
 
@@ -141,10 +143,9 @@ class SugeridaController {
             return res.status(400).json({ error:'Schema is not valid.' });
         }
 
-
         const { id } = req.params;
         const { cidade } = req.body;
-        const { status, titulo, descricao, modalidade, diasEturnos, quantidadeInteressados, comentario, userId, atividadeId } = req.body; 
+        const { status, titulo, descricao, modalidade, diasEturnos, quantidadeInteressados, comentario, tipoDemanda, userId, atividadeId } = req.body; 
 
         const dados = {
             status,
@@ -154,6 +155,7 @@ class SugeridaController {
             diasEturnos,
             quantidadeInteressados,
             comentario,
+            tipoDemanda,
             userId,
             atividadeId
         }

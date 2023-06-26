@@ -13,6 +13,7 @@ class Sugerida extends Model {
                 diasEturnos: Sequelize.STRING,
                 modalidade: Sequelize.STRING,
                 categoria: Sequelize.STRING,
+                tipoDemanda: Sequelize.STRING
             },
             {
                 sequelize,

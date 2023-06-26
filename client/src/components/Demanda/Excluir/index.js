@@ -1,4 +1,4 @@
-export default function ExcluirAtiviade({ atividadeSelecionada, closeModal }) {
+export default function ExcluirAtiviade({ demandaSelecionada, closeModal }) {
     /* verificar se tem alguma demanda relacionada */
     return (
         <>

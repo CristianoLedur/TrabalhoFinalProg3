@@ -1,12 +1,12 @@
 import React, {useState, useEffect} from 'react';
 
 export default function EditarAtiviade({ atividadeSelecionada, closeModal }) {
-    const [texto, setTexto] = useState('');
     const [ backendCidades, setBackendCidades ] = useState([{}]);
+    const [ toggleBoxCidades, setToggleBoxCidades ] = useState(false);
 
-    const handleChange = (event) => {
-        setTexto(event.target.value);
-    };
+    const handleBoxCidades = () => {
+        setToggleBoxCidades(!toggleBoxCidades);
+    }
 
     useEffect(() => {
         const fetchCidades = async () => {
@@ -66,7 +66,13 @@ export default function EditarAtiviade({ atividadeSelecionada, closeModal }) {
                                 </div>
                                 
                                 <div>
-                                    <button id="dropdownBgHoverButton" data-dropdown-toggle="dropdownBgHover" className="text-white bg-blue-700 w-auto hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
+                                    <button 
+                                        onClick={handleBoxCidades}
+                                        id="dropdownBgHoverButton" 
+                                        data-dropdown-toggle="dropdownBgHover" 
+                                        className="text-white bg-blue-700 w-auto hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" 
+                                        type="button"
+                                    >
                                         Cidades 
                                         <svg className="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
@@ -74,7 +80,13 @@ export default function EditarAtiviade({ atividadeSelecionada, closeModal }) {
                                         </svg>
                                     </button>
                                     {/* <!-- Dropdown menu --> */}
-                                    <div id="dropdownBgHover" className="z-10 w-48 bg-white rounded-lg shadow dark:bg-gray-700">
+                                    <div 
+                                        id="dropdownBgHover" 
+                                        className={toggleBoxCidades 
+                                            ? "z-10 w-48 bg-white rounded-lg shadow dark:bg-gray-700"
+                                            : "hidden"
+                                        }
+                                    >
                                         
                                         <ul className="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownBgHoverButton">
                                             {backendCidades.map((cidade, i) => (

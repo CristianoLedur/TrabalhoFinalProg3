@@ -10,6 +10,7 @@ class Solicitada extends Model {
                 comentario: Sequelize.INTEGER,
                 quantidadeInteressados: Sequelize.INTEGER,
                 observacao: Sequelize.STRING,
+                tipoDemanda: Sequelize.STRING
             },
             {
                 sequelize,

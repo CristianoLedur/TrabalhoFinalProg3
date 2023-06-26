@@ -41,6 +41,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      tipoDemanda: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
       userId: {
         type: Sequelize.INTEGER,
         references: { 

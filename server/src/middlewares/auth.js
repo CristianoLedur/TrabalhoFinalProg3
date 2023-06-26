@@ -15,20 +15,6 @@ export default async (req, res, next) => {
         const decoded = await jwt.verify( token, authConfig.secret);
         req.userId = decoded.id;
 
-        // const tipoUsuario = decoded.tipoUsuario;
-
-        // if (tipoUsuario === 'servidor') {
-        //     // Logica de permissoes 
-        //     // req.permissao = 'servidor';
-        // } else if (tipoUsuario === 'aluno') {
-        //     // Logica de permissoes 
-        //     // req.permissao = 'aluno';
-        // } else if (tipoUsuario === 'comunidadeExterna') {
-        //     // Logica de permissoes 
-        //     // req.permissao = 'comunidadeExterna';
-        // } else {
-        //     return res.status(403).json({ error: 'Invalid user type.' });
-        // }
         return next();
 
     } catch ( error ) {

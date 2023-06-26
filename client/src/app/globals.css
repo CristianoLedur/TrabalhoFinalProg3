@@ -26,6 +26,10 @@ main {
   width: 100%;
 }
 
+.box-profile {
+  height: calc(100vh - 61px - 165px);
+}
+
 /* .teste {
   color:#eff6ff;
   color: #dbeafe;

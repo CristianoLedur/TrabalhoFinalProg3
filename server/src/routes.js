@@ -16,7 +16,7 @@ routes.post('/session', SessionController.store);
 routes.get('/atividades', AtividadeController.index); 
 routes.get('/atividade', AtividadeController.show);
 
-routes.use(authMiddleware);
+// routes.use(authMiddleware);
 
 // Cidade
 routes.get('/cidades', CidadeController.index);

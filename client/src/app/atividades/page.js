@@ -13,6 +13,7 @@ export default function Atividades() {
     const [backendData, setBackendData] = useState([{}]);
     const [atividadeSelecionada, setAtividadeSelecionada] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const CRUD = false;
     const [ solicitandoAtividade, setSolicitandoAtividade ] = useState(false);
     const [modalStates, setModalStates] = useState({
         read: false,
@@ -21,41 +22,14 @@ export default function Atividades() {
         create: false,
         suggest: false,
     });
-      
+    
     const openModal = (modalType) => {
         setModalStates((prevState) => ({
             ...prevState,
             [modalType]: true,
         }));
     };
-    // const [modalStates, setModalStates] = useState({
-    //     read: {},
-    //     update: {},
-    //     delete: {},
-    //     create: false,
-    //     suggest: false,
-    // });
-
-    // const openModal = (modalType, itemId) => {
-    //     setModalStates((prevState) => ({
-    //         ...prevState,
-    //         [modalType]: {
-    //             ...prevState[modalType],
-    //             [itemId]: true,
-    //         },
-    //     }));
-    // };
     
-    // const closeModal = (modalType, itemId) => {
-    //     setModalStates((prevState) => ({
-    //         ...prevState,
-    //         [modalType]: {
-    //         ...prevState[modalType],
-    //         [itemId]: false,
-    //         },
-    //     }));
-    // };
-
     const closeModal = () => {
         setModalStates({});
         setAtividadeSelecionada(null);
@@ -82,13 +56,13 @@ export default function Atividades() {
     useEffect(() => {
         closeModal();
         const fetchAtividades = async () => {
-        try {
-            const res = await fetch('http://localhost:3001/atividades');
-            const atividades = await res.json();
-            setBackendData(atividades);
-        } catch (error) {
-            console.log(error);
-        }
+            try {
+                const res = await fetch('http://localhost:3001/atividades');
+                const atividades = await res.json();
+                setBackendData(atividades);
+            } catch (error) {
+                console.log(error);
+            }
         };
         fetchAtividades();
     }, []);
@@ -98,6 +72,7 @@ export default function Atividades() {
             <ListarAtividades 
                 data={backendData}
                 modalStates={modalStates}
+                CRUD={CRUD}
                 openModal={openModal}
                 closeModal={closeModal}
                 fetchAtividade={fetchAtividade}
