@@ -1,6 +1,9 @@
 'use client'
 import { useState, useEffect } from 'react';
-export default function VerDemanda({ demandaSelecionada, handleButtonValidar, closeModal }) {
+import { useUserContext } from '../../../context/user/UserContext';
+
+export default function VerDemanda({ demandaSelecionada, handleButtonValidar, closeModal, fetchDemanda, openModal}) {
+    const { userInfo } = useUserContext();
     const [ backendAtividades, setBackendAtividades ] = useState([{}]);
     const [ validarForm, setValidarForm ] = useState(false);
     const cidades = demandaSelecionada.cidade.map(cidade => cidade.nome);
@@ -21,11 +24,19 @@ export default function VerDemanda({ demandaSelecionada, handleButtonValidar, cl
         setValidarForm(!validarForm);
     }
 
+    const handleOpenModal = (modalType, itemId, tipoDemanda) => {
+        fetchDemanda(tipoDemanda, itemId);
+        setTimeout(() => {
+            openModal(modalType, itemId);
+        }, (300));
+    };
+
     useEffect(() => {
         const fetchAtividades = async () => {
             try {
                 const res = await fetch('http://localhost:3001/atividades');
                 const atividades = await res.json();
+                //  filtrar por atividades aceitas
                 setBackendAtividades(atividades);
             } catch (error) {
                 console.log(error);
@@ -33,6 +44,25 @@ export default function VerDemanda({ demandaSelecionada, handleButtonValidar, cl
         };
         fetchAtividades();
     }, []);
+
+    useEffect(() => {
+        closeModal();
+        const fetchDemandas = async () => {
+            try {
+                const response = await fetch('http://localhost:3001/demandas-sugeridas', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                })
+                const dataSugeridas = await response.json();
+                setBackendData(data);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        fetchDemandas();
+    }, [validarForm]);
 
     return (
         <>
@@ -67,10 +97,14 @@ export default function VerDemanda({ demandaSelecionada, handleButtonValidar, cl
                         </div>
                         {demandaSelecionada.tipoDemanda === 'sugerida' ? (
                             <dl>
-                                <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Usuário</dt>
-                                <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{demandaSelecionada.user.nome}</dd>
                                 <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Descrição</dt>
                                 <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{demandaSelecionada.descricao}</dd>
+                                { (userInfo.id !== demandaSelecionada.user.id) && (
+                                    <>
+                                        <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Usuário</dt>
+                                        <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{demandaSelecionada.user.nome}</dd>
+                                    </>  
+                                )}
                                 <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Modalidade</dt>
                                 <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{demandaSelecionada.modalidade}</dd>
                                 <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Categoria</dt>
@@ -100,10 +134,14 @@ export default function VerDemanda({ demandaSelecionada, handleButtonValidar, cl
                             </dl>
                         ) : (
                             <dl>
-                                <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Usuário</dt>
-                                <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{demandaSelecionada.user.nome}</dd>
                                 <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Observação</dt>
                                 <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{demandaSelecionada.observacao}</dd>
+                                { (userInfo.id !== demandaSelecionada.user.id) && (
+                                    <>
+                                        <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Usuário</dt>
+                                        <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{demandaSelecionada.user.nome}</dd>
+                                    </>  
+                                )}
                                 <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Quantidade de interessados</dt>
                                 <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{demandaSelecionada.quantidadeInteressados}</dd>
                                 {temCidades && (
@@ -125,20 +163,44 @@ export default function VerDemanda({ demandaSelecionada, handleButtonValidar, cl
                                 <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{demandaSelecionada.updatedAt}</dd>
                             </dl>
                         )}
-                        <div className="flex justify-between items-center">
-                            <div className="flex items-center space-x-3 sm:space-x-4">            
-                                <button 
-                                    onClick={handleForm}
-                                    type="button" 
-                                    className={!validarForm 
-                                        ? "py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                                        : "hidden"
-                                    }
-                                >
-                                    Validar
-                                </button>
-                            </div>              
-                        </div>
+                        {userInfo && (
+                            <div className={!validarForm 
+                                ? "flex justify-between items-center"
+                                : "hidden"
+                                }
+                            >
+                                <div className="flex items-center space-x-3 sm:space-x-4">
+                                    {(userInfo.id === demandaSelecionada.user.id) && (
+                                        <button 
+                                            onClick={() => handleOpenModal('update', demandaSelecionada.id, demandaSelecionada.tipoDemanda)}
+                                            type="button" className="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                                            <svg aria-hidden="true" className="mr-1 -ml-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"></path><path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd"></path></svg>
+                                            Editar
+                                        </button> 
+                                    )}
+                                    {(userInfo.tipoUsuario === 'Servidor' ) && (   
+                                        <button 
+                                            onClick={handleForm}
+                                            type="button" 
+                                            className={!validarForm 
+                                                ? "py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                                                : "hidden"
+                                            }
+                                        >
+                                            Validar
+                                        </button>
+                                    )}
+                                </div> 
+                                {( (userInfo.id === demandaSelecionada.user.id) && (demandaSelecionada.status !== 'Aceita')) && (             
+                                    <button 
+                                        onClick={() => handleOpenModal('delete', demandaSelecionada.id, demandaSelecionada.tipoDemanda)}
+                                        type="button" className="inline-flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-900">
+                                        <svg aria-hidden="true" className="w-5 h-5 mr-1.5 -ml-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd"></path></svg>
+                                        Excluir
+                                    </button>
+                                )}
+                            </div>
+                        )}
                         <div className={validarForm 
                             ? ""
                             : "hidden"
@@ -201,7 +263,7 @@ export default function VerDemanda({ demandaSelecionada, handleButtonValidar, cl
                                 </div>
                             </form>
                         </div>
-                    </div>
+                    </div> 
                 </div>
             </div>
         </>

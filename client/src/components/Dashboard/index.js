@@ -1,9 +1,12 @@
 'use client'
+import { useUserContext } from '../../context/user/UserContext';
 import HeaderOn from "../HeaderOn";
 import Sidebar from "../Sidebar";
-import React, { useState } from 'react';
+import HeaderOff from "../HeaderOff";
+import React, { useState, useEffect  } from 'react';
 
 export default function Dashboard() {
+    const { userInfo } = useUserContext();
     const [ drawerNavigation, setDrawerNavigation ] = useState(true);
     const [ appsDropdown, setAppsDropdown ] = useState(true);
     const [ dropdown, setDropdown ] = useState(true);
@@ -21,21 +24,29 @@ export default function Dashboard() {
     };
 
     return (
-        <div 
-            className="antialiased bg-gray-50 dark:bg-gray-900"
-        >
-            <HeaderOn 
-                drawerNavigation={drawerNavigation}
-                handleToggleDrawerNavigation={handleToggleDrawerNavigation}
-                appsDropdown={appsDropdown}
-                handleToggleAppsDropwdown={handleToggleAppsDropwdown}
-                dropdown={dropdown}
-                handleToggleDropdown={handleToggleDropdown}
-            />
-            <Sidebar 
-                drawerNavigation={drawerNavigation}
-                handleToggleDrawerNavigation={handleToggleDrawerNavigation}
-            />
-        </div>
+        <>
+            {!userInfo && (
+                <HeaderOff />
+            )}
+            {userInfo && (
+                <div 
+                    className="antialiased z=50 bg-gray-50 dark:bg-gray-900"
+                >
+                    <HeaderOn 
+                        user={userInfo}
+                        drawerNavigation={drawerNavigation}
+                        handleToggleDrawerNavigation={handleToggleDrawerNavigation}
+                        appsDropdown={appsDropdown}
+                        handleToggleAppsDropwdown={handleToggleAppsDropwdown}
+                        dropdown={dropdown}
+                        handleToggleDropdown={handleToggleDropdown}
+                    />
+                    <Sidebar 
+                        drawerNavigation={drawerNavigation}
+                        handleToggleDrawerNavigation={handleToggleDrawerNavigation}
+                    />
+                </div>
+            )}
+        </>
     )
 }

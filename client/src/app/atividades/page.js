@@ -8,12 +8,11 @@ import CadastrarAtiviade from '../../components/Atividades/Cadastrar';
 import SolicitarAtividades from '../../components/Atividades/Solicitar';
 import SugerirAtividade from '../../components/Atividades/Sugerir';
 
-
 export default function Atividades() {
     const [backendData, setBackendData] = useState([{}]);
     const [atividadeSelecionada, setAtividadeSelecionada] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-    const CRUD = false;
+    const CRUD = false; // esta sendo utilizado?
     const [ solicitandoAtividade, setSolicitandoAtividade ] = useState(false);
     const [modalStates, setModalStates] = useState({
         read: false,
@@ -72,7 +71,6 @@ export default function Atividades() {
             <ListarAtividades 
                 data={backendData}
                 modalStates={modalStates}
-                CRUD={CRUD}
                 openModal={openModal}
                 closeModal={closeModal}
                 fetchAtividade={fetchAtividade}
@@ -88,8 +86,11 @@ export default function Atividades() {
                     ) : (
                     <VerAtividades
                         handleButtonSugerir={handleButtonSugerir}
+                        fetchAtividade={fetchAtividade}
                         atividadeSelecionada={atividadeSelecionada}
+                        modalStates={modalStates}
                         closeModal={closeModal}
+                        openModal={openModal}
                     />
                     )}
                 </>

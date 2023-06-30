@@ -1,6 +1,8 @@
 import Atividade from '../models/Atividade.js';
 import User from '../models/User.js';
 import Cidade from '../models/Cidade.js';
+import Sugerida from '../models/Sugerida.js';
+import Solicitada from '../models/Solicitada.js';
 import * as Yup from 'yup';
 
 class AtividadeController {
@@ -21,7 +23,17 @@ class AtividadeController {
                         attributes: []
                     }
                     
-                }, 
+                },
+                {
+                    model: Sugerida,
+                    as: 'sugerida',
+                    attributes:['id','titulo']
+                },
+                {
+                    model: Solicitada,
+                    as: 'solicitada',
+                    attributes:['id','titulo']
+                }
             ]
         });
         return res.json( atividades );
@@ -53,8 +65,17 @@ class AtividadeController {
                     through: {
                         attributes: []
                     }
-                    
-                }, 
+                },
+                {
+                    model: Sugerida,
+                    as: 'sugerida',
+                    attributes:['id','titulo']
+                },
+                {
+                    model: Solicitada,
+                    as: 'solicitada',
+                    attributes:['id','titulo']
+                } 
             ]
         });
 
@@ -81,10 +102,10 @@ class AtividadeController {
 
         const { cidade } = req.body;
         
-        const { status, titulo, descricao, modalidade, categoria, diasEturnos, userId } = req.body;
+        const { status, titulo, descricao, modalidade, categoria, quantidadeVagas, diasEturnos, userId } = req.body;
 
         let atividade = await Atividade.findAll({
-            where: {titulo}
+            where: {titulo, userId}
         });
 
         if( !atividade || atividade.length == 0 ) {
@@ -95,6 +116,7 @@ class AtividadeController {
                 modalidade,
                 categoria,
                 diasEturnos,
+                quantidadeVagas,
                 userId,
             });
         }
@@ -162,6 +184,16 @@ class AtividadeController {
                     through: {
                         attributes: []
                     }
+                },
+                {
+                    model: Sugerida,
+                    as: 'sugerida',
+                    attributes:['id','titulo']
+                },
+                {
+                    model: Solicitada,
+                    as: 'solicitada',
+                    attributes:['id','titulo']
                 }
             ]
         });

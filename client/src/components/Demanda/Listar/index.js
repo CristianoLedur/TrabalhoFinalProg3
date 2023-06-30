@@ -1,11 +1,15 @@
 'use client'
 import React, { useEffect, useState } from 'react';
+import { useUserContext } from '../../../context/user/UserContext';
+import { usePathname } from 'next/navigation';
 import Buscar from '../../Buscar';
 import Filtrar from '../../Filtrar';
 import Paginacao from '../../Paginacao';
 
-export default function ListarDemanda({ openModal, data, fetchDemanda, CRUD }) {
+export default function ListarDemanda({ openModal, data, fetchDemanda }) {
     const [buttonAcaoOpen, setButtonAcaoOpen] = useState([]);
+    const { userInfo } = useUserContext();
+    const pathname = usePathname();
 
     const handleButtonAcao = (index) => {
         const updatedButtonAcaoOpen = [...buttonAcaoOpen];
@@ -39,12 +43,12 @@ export default function ListarDemanda({ openModal, data, fetchDemanda, CRUD }) {
                                     <th scope="col" className="px-4 py-3">Última Alteração</th>
                                     <th scope="col" className="px-4 py-3">Status</th>
                                     <th scope="col" className="px-4 py-3">
-                                        <span className="sr-only"></span>
+                                        <span className="sr-only">Ações</span>
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {data.map((demanda, i) => (
+                               {data.map((demanda, i) => (
                                     <tr 
                                         key={i}
                                         className="border-b dark:border-gray-700"
@@ -56,71 +60,19 @@ export default function ListarDemanda({ openModal, data, fetchDemanda, CRUD }) {
                                             {demanda.tipoDemanda}
                                         </td>
                                         <td className="px-4 py-3">
-                                            {
-                                                demanda.updatedAt
-                                            }
+                                            {demanda.updatedAt}
                                         </td>
                                         <td className="px-4 py-3">
                                             {demanda.status}
                                         </td>
                                         <td className="px-4 py-3 flex items-center justify-end">
-                                            {CRUD ? (
-                                                <>
-                                                    <button 
-                                                        onClick={() => handleButtonAcao(i)}
-                                                        id="apple-imac-27-dropdown-button" 
-                                                        data-dropdown-toggle="apple-imac-27-dropdown" 
-                                                        className="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100" 
-                                                        type="button"
-                                                    >
-                                                        <svg className="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                            <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-                                                        </svg>
-                                                    </button>
-                                                    <div 
-                                                        id="apple-imac-27-dropdown" 
-                                                        className={buttonAcaoOpen[i] 
-                                                        ? "z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600"
-                                                        : "hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600"
-                                                    }>
-                                                        <ul className="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="apple-imac-27-dropdown-button">
-                                                            <li>
-                                                                
-                                                                <button 
-                                                                    onClick={() => handleOpenModal('read', demanda.id, demanda.tipoDemanda)}
-                                                                    className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                                                >
-                                                                    Ver
-                                                                </button>
-                                                            </li>
-                                                            <li>
-                                                                <button 
-                                                                    onClick={() => handleOpenModal('update', demanda.id, demanda.tipoDemanda)}
-                                                                    className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                                                >
-                                                                    Editar
-                                                                </button>
-                                                            </li>
-                                                        </ul>
-                                                        <div className="py-1">
-                                                            <button
-                                                                onClick={() => handleOpenModal('delete', demanda.id, demanda.tipoDemanda)}
-                                                                className="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                                                            >
-                                                                Excluir
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </>
-                                            ) : (
-                                                <button
-                                                    onClick={() => handleOpenModal('read', demanda.id, demanda.tipoDemanda)}  
-                                                    data-modal-show="editUserModal" 
-                                                    className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                                                >
-                                                    Ver demanda
-                                                </button>
-                                            )}
+                                            <button
+                                                onClick={() => handleOpenModal('read', demanda.id, demanda.tipoDemanda)}  
+                                                data-modal-show="editUserModal" 
+                                                className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                                            >
+                                                Ver demanda
+                                            </button>
                                         </td>
                                     </tr>
                                 ))}

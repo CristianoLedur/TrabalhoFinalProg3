@@ -1,4 +1,4 @@
-'use serve'
+import Link from 'next/link';
 export default function Footer() {
     return (
         <footer className="bg-transparent rounded-lg shadow dark:bg-gray-900 m-4">

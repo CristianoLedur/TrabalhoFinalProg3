@@ -1,9 +1,13 @@
 'use client'
 import React, { useEffect, useState, useContext } from 'react';
+import { getCookie } from "cookies-next";
+import { useUserContext } from '../../context/user/UserContext';
 import ListarDemanda from '../../components/Demanda/Listar';
 import VerDemanda from '../../components/Demanda/Ver';
 
 export default function Demandas() {
+    const { userInfo } = useUserContext();
+    const token = getCookie('Authorization');
     const [backendData, setBackendData] = useState([{}]);
     const [demandaSelecionada, setDemandaSelecionada] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -27,7 +31,12 @@ export default function Demandas() {
             var route = 'demanda-solicitada';
         }
         try {
-            const response = await fetch(`http://localhost:3001/${route}?id=${itemId}`);
+            const response = await fetch(`http://localhost:3001/${route}?id=${itemId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
             const data = await response.json();
             setDemandaSelecionada(data);
             openModal();
@@ -43,8 +52,18 @@ export default function Demandas() {
         const fetchDemandas = async () => {
             try {
                 const [solicitadasRes, sugeridasRes] = await Promise.all([
-                  fetch('http://localhost:3001/demandas-solicitadas'),
-                  fetch('http://localhost:3001/demandas-sugeridas')
+                    fetch('http://localhost:3001/demandas-solicitadas', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }),
+                    fetch('http://localhost:3001/demandas-sugeridas', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }),
                 ]);
           
                 const solicitadasData = await solicitadasRes.json();

@@ -85,7 +85,6 @@ class UserController {
 
     // Store (POST): new ...
     async store(req, res) {
-
         const schema = Yup.object().shape({
             nome: Yup.string().required().min(2),
             email: Yup.string().email().required(),
@@ -136,6 +135,18 @@ class UserController {
             nome: Yup.string().required().min(2),
             email: Yup.string().email().required(),
             passwordAntigo: Yup.string().min(6),
+            password: Yup.string().min(6),
+            passwordConfirma: Yup.string().when('password', (password, field) =>
+              password ? field.required().oneOf([Yup.ref('password')]) : field
+            ),
+            status: Yup.string().required(),
+            tipoUsuario: Yup.string().required(),
+            cidadeId: Yup.number().required(),
+        });
+
+
+        /*
+        passwordAntigo: Yup.string().min(6),
             password: Yup.string().min(6)
             .when('passwordAntigo', (passwordAntigo, field) => 
             passwordAntigo ? field.required() : field
@@ -143,17 +154,26 @@ class UserController {
             passwordConfirma: Yup.string().when('password', (password, field) =>
             password ? field.required().oneOf([Yup.ref('password')]) : field
             ),
-            status: Yup.string().required(),
-            tipoUsuario: Yup.string().required(),
-            cidadeId: Yup.number().required(),
-        });
+        */
+        // const schema = Yup.object().shape({
+        //     nome: Yup.string().required('Campo obrigatório').min(2),
+        //     email: Yup.string().email('Formato inválido').required('Campo obrigatório'),
+        //     passwordAntigo: Yup.string().min(6),
+        //     password: Yup.string().min(6),
+        //     passwordConfirma: Yup.string().when('password', (password, field) =>
+        //       password ? field.required().oneOf([Yup.ref('password')]) : field
+        //     ),
+        //     status: Yup.string().required('Campo obrigatório'),
+        //     tipoUsuario: Yup.string().required('Campo obrigatório'),
+        //     cidadeId: Yup.number().required('Campo obrigatório'),
+        //   });
         
         if(!(await schema.isValid(req.body))) {
             return res.status(400).json({ error: 'Schema is not valid.' });
         }
 
         const { id } = req.params;
-        const { nome, email } = req.body;
+        const { email } = req.body;
 
         let user = await User.findByPk(id);
         

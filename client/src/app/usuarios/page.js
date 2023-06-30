@@ -1,28 +1,30 @@
 'use client';
 import React, {useState, useEffect} from 'react';
 import { useRouter } from 'next/navigation';
+import CardUser from '../../components/Usuario/Ver';
 
-import CardUser from '../../components/CardUser';
-
-export default function Usuarios({isAuthenticated}) {
+export default function Usuarios() {
+    const [ user, setUser ] = useState(null);
     const [ backendUsuarios, setBackendUsuarios ] = useState([{}]);
     const [ usuarioSelecionado, setUsuarioSelecionado ] = useState(null);
     const [ modalUser, setModalUser] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     // const router = useRouter();
-    // if (!isAuthenticated) {
-    //     // Redireciona o usuário para a página de login
+    // if (!user) {
     //     router.push('/login');
     //     return null;
     // }
 
     useEffect(() => {
+        const dataString = sessionStorage.getItem('user');
+        setUser(JSON.parse(dataString));
         const fetchUsuarios = async () => {
             // enviar o token junto
             try {
                 const res = await fetch('http://localhost:3001/users');
                 const usuarios = await res.json();
                 setBackendUsuarios(usuarios);
+
             } catch (error) {
                 console.log(error);
             }
@@ -35,7 +37,6 @@ export default function Usuarios({isAuthenticated}) {
         try {
             const response = await fetch(`http://localhost:3001/user?email=${value}`);
             const data = await response.json();
-            console.log(data);
             setUsuarioSelecionado(data[0]);
         } catch (error) {
             console.log('Ocorreu um erro ao buscar os detalhes do usuário:', error);

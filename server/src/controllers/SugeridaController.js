@@ -93,7 +93,7 @@ class SugeridaController {
         const { status, titulo, descricao, modalidade, categoria, diasEturnos, quantidadeInteressados, comentario, tipoDemanda, userId, atividadeId } = req.body; 
 
         let demanda = await Sugerida.findAll({
-            where: { titulo }
+            where: { titulo, userId }
         });
 
         if( !demanda || demanda.length == 0 ) {

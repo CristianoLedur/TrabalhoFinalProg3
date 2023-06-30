@@ -3,6 +3,7 @@ import AppsDropdown from "../AppsDropdown";
 import UserDropdown from "../UserDropdown";
 import React from 'react';
 export default function HeaderOn({
+    user,
     drawerNavigation,
     handleToggleDrawerNavigation,
     appsDropdown,
@@ -134,6 +135,7 @@ export default function HeaderOn({
                             />
                         </button>
                         <UserDropdown 
+                            user={user}
                            drawerNavigation={drawerNavigation}
                            handleToggleDrawerNavigation={handleToggleDrawerNavigation}
                            appsDropdown={appsDropdown}

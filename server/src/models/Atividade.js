@@ -30,6 +30,8 @@ class Atividade extends Model {
             foreignKey: 'atividadeId',
             as: 'cidade',
         });
+        this.hasMany(models.Sugerida, {foreignKey: 'atividadeId', as: 'sugerida'});
+        this.hasMany(models.Solicitada, {foreignKey: 'atividadeId', as: 'solicitada'});
     }
 }
 

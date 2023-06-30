@@ -25,7 +25,7 @@ class SolicitadaController {
                 {
                     model: Atividade,
                     as: 'atividade',
-                    attributes:['id','titulo', 'descricao']
+                    attributes:['id','titulo', 'descricao', 'cidade']
                 },  
             ]
         });
@@ -92,7 +92,6 @@ class SolicitadaController {
 
         const { status, titulo, observacao, quantidadeInteressados, comentario, tipoDemanda, userId, atividadeId } = req.body; 
 
-        /* verificar se usuário possuiu mais de uma atividade com este titulo */
         let demanda = await Solicitada.findAll({
             where: { titulo, userId }
         });
@@ -131,7 +130,6 @@ class SolicitadaController {
             titulo: Yup.string(),
             observacao: Yup.string(),
             quantidadeInteressados: Yup.number().required(),
-            comentario: Yup.string(),
             tipoDemanda: Yup.string().required(),
             userId: Yup.number().required(),
             cidadeId: Yup.number(),

@@ -1,13 +1,38 @@
 'use client'
 import React, { useState, useEffect } from "react";
 
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as Yup from 'yup';
+
+
+const schema = Yup.object().shape({
+    nome: Yup.string().required('Campo obrigatório').min(2, 'Nome deve haver pelo menos dois caracteres'),
+    email: Yup.string().email('Formato inválido').required('Campo obrigatório'),
+    password: Yup.string().min(6, 'A senha deve ter pelo menos 6 caracteres.').required('Campo obrigatório'),
+    confirmPassword: Yup.string().oneOf([Yup.ref('password'), null], 'Senhas diferentes'),
+    status: Yup.string().required(),
+    tipoUsuario: Yup.string().required('Selecione uma opção'),
+    cidadeId: Yup.number().required('Selecione uma opção'),
+});
+
 export default function SingUp(props) {
-    const [ nome, setNome ] = useState('');
-    const [ email, setEmail ] = useState('');
-    const [ password, setPassword ] = useState('');
-    const [ tipoUsuario, setTipoUsuario ] = useState('');
-    const [ cidadeId, setCidadeId ] = useState('');
     const [ backendCidades, setBackendCidades ] = useState([{}]);
+    const { register, handleSubmit, formState } = useForm({
+        mode: 'onSubmit',
+        resolver: yupResolver(schema),
+        defaultValues: {
+            nome: '',
+            email: '',
+            password: '',
+            confirmPassword: '',
+            status: 'online',
+            tipoUsuario: '',
+            cidadeId: '',
+        }
+    });
+    const [ emailCadastrado, setEmailCadastrado ] = useState('');
+    const { errors, isSubmitting } = formState;
 
     useEffect(() => {
         const fetchCidades = async () => {
@@ -22,56 +47,54 @@ export default function SingUp(props) {
         fetchCidades();
     }, []);
 
-    /* estes campos de input eu posso trazer tudo para uma unica função */
-    const handleNomeChange = (event) => {
-        setNome(event.target.value);
-    };
-
-    const handleEmailChange = (event) => {
-        setEmail(event.target.value);
-    };
-
-    const handlePasswordChange = (event) => {
-        setPassword(event.target.value);
-    };
-
-    const handleTipoUsuarioSelect = (event) => {
-        setTipoUsuario(event.target.value);
-    };
-
-    const handleCidadeSelect = (event) => {
-        setCidadeId(event.target.value);
-    }
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        /* chamar os métodos para verificar os campos preenchidos 
-        */
+    const handleSubmitData = async (dataForm) => {
+        console.log(dataForm);
         try {
             const response = await fetch('http://localhost:3001/user', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    nome: nome,
-                    email: email,
-                    password: password,
-                    status: "online",
-                    tipoUsuario: tipoUsuario,
-                    cidadeId: cidadeId,
-                }),
+                body: JSON.stringify(dataForm),
             });
       
             const data = await response.json();
-            sessionStorage.setItem('token', data.token);
+            SignIn(data.email, data.password);
         } catch (error) {
           console.error(error);
         }
     };
 
+    const SignIn = async (email, password) => {
+        try {
+            const response = await fetch('http://localhost:3001/session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                }),
+            });
 
-    /* depois de cadastrado já passo a "sessão" para pegar o token */
+            const data = await response.json();
+
+            if (response.ok) {
+                const { token, user } = data;
+                setCookie('Authorization', token);
+                setCookie('user', user)
+                router.push('/');
+            } else {
+                // Tratar o erro de autenticação
+                // console.log(data.error);
+                setErro("Email ou senha inválido");
+            } 
+        } catch (error) {
+            setEmailCadastrado('Email já cadastrado');
+            // console.log(error);
+        }
+    }
     return (
         <section 
             className="bg-gray-50 dark:bg-gray-900"
@@ -87,7 +110,7 @@ export default function SingUp(props) {
                         src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg" 
                         alt="logo" 
                     />
-                        Nome site...   
+                        Nome site   
                 </a>
                 <div 
                     className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700"
@@ -98,97 +121,109 @@ export default function SingUp(props) {
                         <h1 
                             className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white"
                         >
-                            Create and account
+                            Criar conta
                         </h1>
                         <form 
                             className="space-y-4 md:space-y-6" 
                             action="POST"
-                            onSubmit={handleSubmit}
+                            onSubmit={handleSubmit(handleSubmitData)}
                         >
                             <div>
                                 <label 
                                     htmlFor="name" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >
-                                    Your name
+                                    Nome
                                 </label>
                                 <input 
                                     type="text" 
                                     name="name" 
                                     id="name"
-                                    value={nome}
-                                    onChange={handleNomeChange}
+                                    autoFocus
+                                    { ...register('nome')}
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                                     placeholder="João da Lapa" 
                                     required="" 
                                 />
+                                {errors.nome && (
+                                    <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.nome.message}</p>
+                                )}
                             </div>
                             <div>
                                 <label 
                                     htmlFor="email" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >
-                                    Your email
+                                    Email
                                 </label>
                                 <input 
                                     type="email" 
                                     name="email" 
                                     id="email"
-                                    value={email}
-                                    onChange={handleEmailChange}
+                                    { ...register('email')}
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                                     placeholder="name@company.com" 
                                     required="" 
                                 />
+                                {errors.email && (
+                                    <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.email.message}</p>
+                                )}
+                                {emailCadastrado && (
+                                    <p className="mt-2 text-sm text-red-600 dark:text-red-500">{emailCadastrado}</p>
+                                )}
                             </div>
                             <div>
                                 <label 
                                     htmlFor="password" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >
-                                    Password
+                                    Senha
                                 </label>
                                 <input 
                                     type="password" 
                                     name="password" 
                                     id="password" 
-                                    value={password}
-                                    onChange={handlePasswordChange}
+                                    { ...register('password')}
                                     placeholder="••••••••" 
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                                     required="" 
                                 />
+                                {errors.password && (
+                                    <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.password.message}</p>
+                                )}
                             </div>
                             <div>
                                 <label 
                                     htmlFor="confirm-password" 
                                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >
-                                    Confirm password
+                                    Confirmar senha
                                 </label>
                                 <input 
                                     type="password" 
                                     name="confirm-password" 
                                     id="confirm-password" 
                                     placeholder="••••••••"
-                                    // verifico se são iguais
+                                    { ...register('confirmPassword')}
                                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                                     required="" 
                                 />
+                                {errors.confirmPassword && (
+                                    <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.confirmPassword.message}</p>
+                                )}
                             </div>
                             <div>
                                 <label 
                                     htmlFor="cidades" 
-                                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                 >
-                                    Select your country
+                                    Cidade
                                 </label>
                                 <select 
                                     defaultValue="cidades"
                                     id="cidades"
-                                    value={cidadeId}
-                                    onChange={handleCidadeSelect}
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    { ...register('cidadeId')}
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 >
                                     <option value="">Selecione uma opção</option>
                                     {backendCidades.map((cidade) => (
@@ -200,72 +235,47 @@ export default function SingUp(props) {
                                         </option>
                                     ))}
                                 </select>
+                                {errors.cidadeId && (
+                                    <p className="mt-2 text-sm text-red-600 dark:text-red-500">Selecione uma opção</p>
+                                )}
                             </div>
                             <div>
-                            <label 
-                                htmlFor="tipoUsuario" 
-                                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                            >
-                                Select your country
-                            </label>
+                                <label 
+                                    htmlFor="tipoUsuario" 
+                                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                >
+                                    Papel
+                                </label>
                                 <select 
                                     id="tipoUsuario"
-                                    value={tipoUsuario}
-                                    onChange={handleTipoUsuarioSelect}
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    { ...register('tipoUsuario')}
+                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 >
                                     <option value="">Selecione uma opção</option>
-                                    <option value="aluno">Aluno</option>
-                                    <option value="servidor">Servidor</option>
-                                    <option value="comunidadeExterna">Comunidade Externa</option>
+                                    <option value="Aluno">Aluno</option>
+                                    <option value="Servidor">Servidor</option>
+                                    <option value="Comunidade Externa">Comunidade Externa</option>
                                 </select>
-                            </div>
-                            <div 
-                                className="flex items-start"
-                            >
-                                <div 
-                                    className="flex items-center h-5"
-                                >
-                                <input 
-                                    id="terms" 
-                                    aria-describedby="terms" 
-                                    type="checkbox" 
-                                    className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800" 
-                                    required="" 
-                                />
-                                </div>
-                                <div 
-                                    className="ml-3 text-sm"
-                                >
-                                    <label 
-                                        htmlFor="terms" 
-                                        className="font-light text-gray-500 dark:text-gray-300"
-                                    >
-                                        I accept the
-                                        <a 
-                                            className="font-medium text-primary-600 hover:underline dark:text-primary-500" 
-                                            href="#"
-                                        >
-                                            Terms and Conditions
-                                        </a>
-                                    </label>
-                                </div>
+                                {errors.tipoUsuario && (
+                                    <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.tipoUsuario.message}</p>
+                                )}
                             </div>
                             <button 
                                 type="submit" 
                                 className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                                disabled={isSubmitting}
                             >
-                                Create an account
+                                {isSubmitting ? 'Cadastrando...' : 'Cadastrar'}
                             </button>
                             <p 
                                 className="text-sm font-light text-gray-500 dark:text-gray-400"
                             >
-                                Already have an account? 
+                                Já possui conta?
                                 <a 
                                     onClick={() => props.ToggleCompLogin()} 
-                                    className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                                    className="pl-1 font-medium text-primary-600 hover:underline dark:text-primary-500"
                                 >
-                                    Login
+                                    Entrar
                                 </a>
                             </p>
                         </form>

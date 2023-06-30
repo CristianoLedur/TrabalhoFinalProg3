@@ -1,11 +1,17 @@
-'use client'
-import React, { useEffect, useState, useContext } from 'react';
+'use client';
+import React, { useEffect, useState } from 'react';
+import { getCookie } from "cookies-next";
+import { useUserContext } from '../../context/user/UserContext';
 import ListarDemanda from '../../components/Demanda/Listar';
 import VerDemanda from '../../components/Demanda/Ver';
-import EditarDemanda from '../../components/Demanda/Editar';
+import EditarSolicitada from '../../components/Demanda/EditarSolicitada';
+import EditarSugerida from '../../components/Demanda/EditarSugerida';
 import ExcluirDemanda from '../../components/Demanda/Excluir';
 
 export default function MinhasDemandas() {
+    const { userInfo } = useUserContext();
+    const token = getCookie('Authorization');
+    const email = userInfo.email;
     const [backendData, setBackendData] = useState([{}]);
     const [demandaSelecionada, setDemandaSelecionada] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -36,7 +42,12 @@ export default function MinhasDemandas() {
             var route = 'demanda-solicitada';
         }
         try {
-            const response = await fetch(`http://localhost:3001/${route}?id=${itemId}`);
+            const response = await fetch(`http://localhost:3001/${route}?id=${itemId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
             const data = await response.json();
             setDemandaSelecionada(data);
             openModal();
@@ -49,11 +60,14 @@ export default function MinhasDemandas() {
 
     useEffect(() => {
         closeModal();
-        let email = 'joao%40gmail.com';
         const fetchAtividades = async () => {
             try {
-                // pegar pelo localstore ou cookie o EMAIL do usuário
-                const res = await fetch(`http://localhost:3001/user?email=${email}`);
+                const res = await fetch(`http://localhost:3001/user?email=${email}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
                 const user = await res.json();
                 let data = user[0].solicitada.concat(user[0].sugerida);
                 setBackendData(data);
@@ -62,7 +76,7 @@ export default function MinhasDemandas() {
             }
         };
         fetchAtividades();
-    }, []);
+    }, [email]);
 
     return (
         <>
@@ -78,14 +92,23 @@ export default function MinhasDemandas() {
             {modalStates.read && (
                 <VerDemanda
                     demandaSelecionada={demandaSelecionada}
+                    fetchDemanda={fetchDemanda}
                     closeModal={closeModal}
+                    openModal={openModal}
                 />
             )}
             {modalStates.update && (
-                <EditarDemanda
-                    demandaSelecionada={demandaSelecionada}
-                    closeModal={closeModal}
-                />
+                demandaSelecionada.tipoDemanda === 'sugerida' ? (
+                    <EditarSugerida
+                        demandaSelecionada={demandaSelecionada}
+                        closeModal={closeModal}
+                    />
+                ) : (
+                    <EditarSolicitada
+                        demandaSelecionada={demandaSelecionada}
+                        closeModal={closeModal}
+                    />
+                )
             )}
             {modalStates.delete && (
                 <ExcluirDemanda 

@@ -1,12 +1,17 @@
 'use client'
 import React, { useEffect, useState, useContext } from 'react';
+import { getCookie } from "cookies-next";
+import { useUserContext } from '../../context/user/UserContext';
 import ListarAtividades from '../../components/Atividades/Listar';
 import VerAtividades from '../../components/Atividades/Ver';
 import EditarAtividades from '../../components/Atividades/Editar';
 import ExcluirAtividades from '../../components/Atividades/Excluir';
 import CadastrarAtiviade from '../../components/Atividades/Cadastrar';
 
-export default function Atividades() {
+export default function MinhasAtividades() {
+    const { userInfo } = useUserContext();
+    const token = getCookie('Authorization');
+    const email = userInfo.email;
     const [backendData, setBackendData] = useState([{}]);
     const [atividadeSelecionada, setAtividadeSelecionada] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -33,7 +38,12 @@ export default function Atividades() {
     const fetchAtividade = async (itemId) => {
         setIsLoading(true);
         try {
-            const response = await fetch(`http://localhost:3001/atividade?id=${itemId}`);
+            const response = await fetch(`http://localhost:3001/atividade?id=${itemId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                }
+            });
             const data = await response.json();
             setAtividadeSelecionada(data);
         } catch (error) {
@@ -45,11 +55,14 @@ export default function Atividades() {
 
     useEffect(() => {
         closeModal();
-        let email = 'mary%40gmail.com';
         const fetchAtividades = async () => {
             try {
-                // pegar pelo localstore ou cookie o EMAIL do usuário
-                const res = await fetch(`http://localhost:3001/user?email=${email}`);
+                const res = await fetch(`http://localhost:3001/user?email=${email}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    }
+                });
                 const user = await res.json();
                 setBackendData(user[0].atividade);
             } catch (error) {
@@ -57,7 +70,7 @@ export default function Atividades() {
             }
         };
         fetchAtividades();
-    }, []);
+    }, [email]);
 
     return (
         <>
@@ -72,6 +85,8 @@ export default function Atividades() {
             />
             {modalStates.read && (
                 <VerAtividades
+                    fetchAtividade={fetchAtividade}
+                    openModal={openModal}
                     atividadeSelecionada={atividadeSelecionada}
                     closeModal={closeModal}
                 />
