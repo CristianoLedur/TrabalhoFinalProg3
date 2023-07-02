@@ -18,6 +18,9 @@ class SessionController {
         }
 
         const { id, nome, tipoUsuario, status } = user;
+        user.status = 'online';
+        await user.save();
+
         return res.json({
             user: {
                 id,
@@ -30,6 +33,24 @@ class SessionController {
                 expiresIn: authConfig.expiresIn,
             } ),
         });
+    }
+
+    async destroy(req, res) {
+        const { id } = req.body;
+    
+        try {
+            const user = await User.findByPk(id);
+            
+            if (!user) {
+                return res.status(404).json({ error: 'User not found.' });
+            }
+            user.status = 'offline';
+            await user.save();
+            
+            return res.json({ message: 'User status updated successfully.' });
+        } catch (error) {
+            return res.status(500).json({ error: 'Internal server error.' });
+        }
     }
 }
 

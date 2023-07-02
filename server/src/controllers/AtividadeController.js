@@ -69,12 +69,12 @@ class AtividadeController {
                 {
                     model: Sugerida,
                     as: 'sugerida',
-                    attributes:['id','titulo']
+                    attributes:['id','titulo', 'status']
                 },
                 {
                     model: Solicitada,
                     as: 'solicitada',
-                    attributes:['id','titulo']
+                    attributes:['id','titulo', 'status']
                 } 
             ]
         });
@@ -157,6 +157,7 @@ class AtividadeController {
 
         const { id } = req.params;
         const { cidade } = req.body;
+        const { sugerida } = req.body;
 
         const { status, titulo, descricao, modalidade, categoria, diasEturnos, quantidadeVagas, userId } = req.body; 
 
@@ -188,12 +189,12 @@ class AtividadeController {
                 {
                     model: Sugerida,
                     as: 'sugerida',
-                    attributes:['id','titulo']
+                    attributes:['id','titulo', 'status']
                 },
                 {
                     model: Solicitada,
                     as: 'solicitada',
-                    attributes:['id','titulo']
+                    attributes:['id','titulo', 'status']
                 }
             ]
         });
@@ -206,6 +207,10 @@ class AtividadeController {
         
         if (cidade && cidade.length > 0) {
             await atividade.setCidade(cidade); // Atualiza a relação com as cidades
+        }
+
+        if (sugerida && sugerida.length > 0) {
+            await atividade.setSugerida(sugerida); // Atualiza a relação com as demandas sugeridas
         }
         
         return res.send();

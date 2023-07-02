@@ -10,6 +10,7 @@ export default function Dashboard() {
     const [ drawerNavigation, setDrawerNavigation ] = useState(true);
     const [ appsDropdown, setAppsDropdown ] = useState(true);
     const [ dropdown, setDropdown ] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleToggleDrawerNavigation = () => {
         setDrawerNavigation(!drawerNavigation);
@@ -25,10 +26,10 @@ export default function Dashboard() {
 
     return (
         <>
-            {!userInfo && (
+            { !isLoading && !userInfo && (
                 <HeaderOff />
             )}
-            {userInfo && (
+            { !isLoading && userInfo && Object.keys(userInfo).length > 0 && (
                 <div 
                     className="antialiased z=50 bg-gray-50 dark:bg-gray-900"
                 >

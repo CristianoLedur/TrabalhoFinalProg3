@@ -76,7 +76,7 @@ export default function ListarAtividade({ openModal, data, fetchAtividade }) {
                                 </tr>
                             </thead>
                             <tbody>
-                                { (pathname === '/atividades') && (userInfo.tipoUsuario !== 'Servidor') && (
+                                { (pathname === '/atividades') && (userInfo === null || (userInfo.tipoUsuario !== 'Servidor')) && (
                                     data.filter(atividade => atividade.status === 'Aceita').map((atividade, i) => (
                                     <tr 
                                         key={i}
@@ -112,7 +112,7 @@ export default function ListarAtividade({ openModal, data, fetchAtividade }) {
                                         </td>
                                     </tr>
                                 )))}
-                                { (pathname === '/atividades') && (userInfo.tipoUsuario === 'Servidor') && (
+                                { userInfo !== null && (pathname === '/atividades') && (userInfo.tipoUsuario === 'Servidor') && (
                                     data.map((atividade, i) => (
                                     <tr 
                                         key={i}

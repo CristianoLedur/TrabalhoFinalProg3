@@ -7,6 +7,7 @@ import VerAtividades from '../../components/Atividades/Ver';
 import EditarAtividades from '../../components/Atividades/Editar';
 import ExcluirAtividades from '../../components/Atividades/Excluir';
 import CadastrarAtiviade from '../../components/Atividades/Cadastrar';
+import NotFound from '../not-found';
 
 export default function MinhasAtividades() {
     const { userInfo } = useUserContext();
@@ -74,39 +75,45 @@ export default function MinhasAtividades() {
 
     return (
         <>
-            <ListarAtividades 
-                data={backendData}
-                modalStates={modalStates}
-                openModal={openModal}
-                CRUD={CRUD}
-                closeModal={closeModal}
-                fetchAtividade={fetchAtividade}
-                isLoading={isLoading}
-            />
-            {modalStates.read && (
-                <VerAtividades
-                    fetchAtividade={fetchAtividade}
-                    openModal={openModal}
-                    atividadeSelecionada={atividadeSelecionada}
-                    closeModal={closeModal}
-                />
-            )}
-            {modalStates.update && (
-                <EditarAtividades
-                    atividadeSelecionada={atividadeSelecionada}
-                    closeModal={closeModal}
-                />
-            )}
-            {modalStates.delete && (
-                <ExcluirAtividades 
-                    atividadeSelecionada={atividadeSelecionada}
-                    closeModal={closeModal}
-                />
-            )}
-            {modalStates.create && (
-                <CadastrarAtiviade 
-                    closeModal={closeModal}
-                />
+            {userInfo.tipoUsuario === 'Comunidade Externa' && <NotFound />}
+            {userInfo.tipoUsuario !== 'Comunidade Externa' && (
+                <>
+                    <ListarAtividades 
+                        data={backendData}
+                        modalStates={modalStates}
+                        openModal={openModal}
+                        CRUD={CRUD}
+                        closeModal={closeModal}
+                        fetchAtividade={fetchAtividade}
+                        isLoading={isLoading}
+                    />
+                
+                    {modalStates.read && (
+                        <VerAtividades
+                            fetchAtividade={fetchAtividade}
+                            openModal={openModal}
+                            atividadeSelecionada={atividadeSelecionada}
+                            closeModal={closeModal}
+                        />
+                    )}
+                    {modalStates.update && (
+                        <EditarAtividades
+                            atividadeSelecionada={atividadeSelecionada}
+                            closeModal={closeModal}
+                        />
+                    )}
+                    {modalStates.delete && (
+                        <ExcluirAtividades 
+                            atividadeSelecionada={atividadeSelecionada}
+                            closeModal={closeModal}
+                        />
+                    )}
+                    {modalStates.create && (
+                        <CadastrarAtiviade 
+                            closeModal={closeModal}
+                        />
+                    )}
+                </>
             )}
         </>
     )

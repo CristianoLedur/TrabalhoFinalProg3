@@ -1,18 +1,29 @@
-import { useContext } from 'react';
-import { useRouter } from 'next/router';
-import { AuthContext } from '../context/user/UserContext';
+'use client';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { APP_ROUTES } from '../constants/app-routes';
+
+const checkUserAuthenticated = () => {
+  const dataString = sessionStorage.getItem('user');
+  return !!dataString;
+};
 
 export default function PrivateRoute({ children }) {
-  const { isAuthenticated } = useContext(AuthContext);
-  const router = useRouter();
+  const { push } = useRouter();
 
-  // Verifica se o usuário está autenticado ao acessar a página
-  if (!isAuthenticated) {
-    // Redireciona o usuário para a página de login
-    router.push('/login');
-    return null;
-  }
+  const isUserAuthenticated = checkUserAuthenticated();
 
-  // Renderiza as rotas protegidas para usuários autenticados
-  return children;
+  useEffect(() => {
+    if(!isUserAuthenticated) {
+      push(APP_ROUTES.public.login)
+    }
+  }, [isUserAuthenticated, push]);
+  
+  return (
+    <>
+      {!isUserAuthenticated && null}
+      {isUserAuthenticated && children}
+    </>
+  );
 }
+

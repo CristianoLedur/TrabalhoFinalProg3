@@ -25,7 +25,7 @@ class SolicitadaController {
                 {
                     model: Atividade,
                     as: 'atividade',
-                    attributes:['id','titulo', 'descricao', 'cidade']
+                    attributes:['id','titulo', 'descricao', 'cidadeId']
                 },  
             ]
         });

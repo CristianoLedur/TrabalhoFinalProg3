@@ -18,6 +18,9 @@ routes.get('/atividade', AtividadeController.show);
 
 routes.use(authMiddleware);
 
+// Logout
+routes.delete('/logout', SessionController.destroy);
+
 // Cidade
 routes.get('/cidades', CidadeController.index);
 routes.get('/cidade', CidadeController.show);

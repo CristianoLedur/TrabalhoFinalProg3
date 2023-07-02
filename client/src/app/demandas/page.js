@@ -1,15 +1,16 @@
 'use client'
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getCookie } from "cookies-next";
 import { useUserContext } from '../../context/user/UserContext';
 import ListarDemanda from '../../components/Demanda/Listar';
 import VerDemanda from '../../components/Demanda/Ver';
+import NotFound from '../not-found';
 
 export default function Demandas() {
     const { userInfo } = useUserContext();
     const token = getCookie('Authorization');
     const [backendData, setBackendData] = useState([{}]);
-    const [demandaSelecionada, setDemandaSelecionada] = useState(null);
+    const [demandaSelecionada, setDemandaSelecionada] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const CRUD = false;
     const [ modalStates, setModalStates] = useState(false);
@@ -38,7 +39,9 @@ export default function Demandas() {
                 }
             });
             const data = await response.json();
+            console.log(data);
             setDemandaSelecionada(data);
+            console.log(demandaSelecionada);
             openModal();
         } catch (error) {
             console.log('Ocorreu um erro ao buscar os detalhes da atividade:', error);
@@ -48,6 +51,7 @@ export default function Demandas() {
     };
 
     useEffect(() => {
+        setIsLoading(true);
         closeModal();
         const fetchDemandas = async () => {
             try {
@@ -78,6 +82,8 @@ export default function Demandas() {
                 setBackendData(data);
             } catch (error) {
                 console.log(error);
+            } finally {
+                setIsLoading(false);
             }
         };
         fetchDemandas();
@@ -85,20 +91,33 @@ export default function Demandas() {
 
     return (
         <>
-            <ListarDemanda 
-                data={backendData}
-                modalStates={modalStates}
-                CRUD={CRUD}
-                openModal={openModal}
-                closeModal={closeModal}
-                fetchDemanda={fetchDemanda}
-                isLoading={isLoading}
-            />
-            {modalStates && (
-                <VerDemanda
-                    demandaSelecionada={demandaSelecionada}
-                    closeModal={closeModal}
-                />
+            {userInfo.tipoUsuario !== 'Servidor' && <NotFound />}
+            {userInfo.tipoUsuario === 'Servidor' && (
+                isLoading ? (
+                    <div>Exibindo barra de loading...</div>
+                ) : (
+                    <ListarDemanda 
+                        data={backendData}
+                        modalStates={modalStates}
+                        CRUD={CRUD}
+                        openModal={openModal}
+                        closeModal={closeModal}
+                        fetchDemanda={fetchDemanda}
+                        isLoading={isLoading}
+                    />
+                )
+            )}
+            {userInfo.tipoUsuario === 'Servidor' && (
+                modalStates && (
+                    isLoading ? (
+                        <div>Exibindo barra de loading...</div>
+                    ) : (
+                        <VerDemanda
+                            demandaSelecionada={demandaSelecionada}
+                            closeModal={closeModal}
+                        />
+                    )
+                )
             )}
         </>
     )

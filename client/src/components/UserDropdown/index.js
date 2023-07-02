@@ -1,6 +1,38 @@
+import { getCookie, deleteCookie } from "cookies-next";
 import { useUserContext } from '../../context/user/UserContext';
+import { useRouter } from "next/navigation";
 export default function UserDropdown(props) {
+    const router = useRouter();
     const { userInfo } = useUserContext();
+    const handleDestroySession = async () => {
+        const token = getCookie('Authorization');
+        try {
+            const response = await fetch(`http://localhost:3001/logout`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userInfo),
+            });
+
+            if (response.ok) {
+                deleteCookie('Authorization');
+                sessionStorage.removeItem('user');
+                router.push('/');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 200);
+            } else {
+                // Tratar o erro de autenticação
+                console.log(data.error);
+            } 
+            // posso apresentar uma mensagem de sucesso na tela
+            
+        } catch (error) {
+            console.log(error);
+        }
+    }
     return (
         <div
             className={
@@ -89,12 +121,12 @@ export default function UserDropdown(props) {
                 aria-labelledby="dropdown"
             >
                 <li>
-                    <a
-                        href="#"
+                    <button
+                        onClick={handleDestroySession}
                         className="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                     >
                         Sair
-                    </a>
+                    </button>
                 </li>
             </ul>
         </div>

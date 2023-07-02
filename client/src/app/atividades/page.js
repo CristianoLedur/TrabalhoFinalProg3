@@ -88,6 +88,7 @@ export default function Atividades() {
                         handleButtonSugerir={handleButtonSugerir}
                         fetchAtividade={fetchAtividade}
                         atividadeSelecionada={atividadeSelecionada}
+                        setAtividadeSelecionada={setAtividadeSelecionada}
                         modalStates={modalStates}
                         closeModal={closeModal}
                         openModal={openModal}

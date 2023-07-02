@@ -1,11 +1,11 @@
 'use client';
-import { useRouter,  } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import EditarUsuario from '../../components/Usuario/Editar';
 import AlterarSenha from '../../components/Usuario/AlterarSenha';
+import { getCookie } from 'cookies-next';
 
 export default function Profile() {
-    const [user, setUser] = useState(null);
+    const token = getCookie('Authorization');
     const [email, setEmail] = useState('');
     const [usuarioSelecionado, setUsuarioSelecionado ] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -13,29 +13,37 @@ export default function Profile() {
         update: false,
         changePassword: false,
     });
-    const router = useRouter();
 
     useEffect(() => {
         const dataString = sessionStorage.getItem('user');
         const user = JSON.parse(dataString);
-        setUser(user);
-        setEmail(user.email);
-      }, []);
+        // setEmail(user.email);
+        fetchUsuario(user.email);
+    }, []);
 
-    useEffect(() => {
-        if (email) {
-          const encodedEmail = encodeURIComponent(email);
-          fetchUsuario(encodedEmail);
-        }
-    }, [email]);
+    // useEffect(() => {
+    //     if (email) {
+    //       const encodedEmail = encodeURIComponent(email);
+    //       fetchUsuario(encodedEmail);
+    //     }
+    // }, [email]);
       
     async function fetchUsuario(value) {
+        console.log(value);
+        setIsLoading(true);
         try {
-            const response = await fetch(`http://localhost:3001/user?email=${value}`);
+            const response = await fetch(`http://localhost:3001/user?email=${value}`,{
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
             const data = await response.json();
             setUsuarioSelecionado(data[0]);
         } catch (error) {
             console.log('Ocorreu um erro ao buscar os detalhes do usuário:', error);
+        } finally {
+            setIsLoading(false);
         }
     };
     

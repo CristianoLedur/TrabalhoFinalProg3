@@ -85,6 +85,9 @@ export default function SingUp(props) {
                 setCookie('Authorization', token);
                 setCookie('user', user)
                 router.push('/');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 200);
             } else {
                 // Tratar o erro de autenticação
                 // console.log(data.error);

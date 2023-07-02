@@ -40,9 +40,13 @@ export default function SignIn(props) {
             if (response.ok) {
                 const { token, user } = data;
                 setCookie('Authorization', token)
+                user.status = "online";
                 const userString = JSON.stringify(user);
                 sessionStorage.setItem('user', userString);
                 router.push('/');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 200);
             } else {
                 // Tratar o erro de autenticação
                 console.log(data.error);

@@ -12,7 +12,7 @@ const schema = Yup.object().shape({
 
 export default function VerAtiviade({ atividadeSelecionada, handleButtonSugerir, closeModal, openModal, fetchAtividade }) {
     const { userInfo } = useUserContext();
-    const [ demandasSugeridas, setDemandasSugeridas ] = useState([{}])
+    const [ demandasSugeridas, setDemandasSugeridas ] = useState([{}]);
     if (atividadeSelecionada.status === "Em avaliação") {
         var statusClassName = "text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:text-gray-300 bg-blue-100 text-blue-800";
     } else if (atividadeSelecionada.status === "Cancelada") {
@@ -31,15 +31,15 @@ export default function VerAtiviade({ atividadeSelecionada, handleButtonSugerir,
         resolver: yupResolver(schema),
         defaultValues: {
             status: atividadeSelecionada.status,
-            // titulo: atividadeSelecionada.titulo,
-            // descricao: atividadeSelecionada.descricao,
-            // modalidade: atividadeSelecionada.modalidade,
-            // categoria: atividadeSelecionada.categoria,
-            // diasEturnos: atividadeSelecionada.diasEturnos,
-            // quantidadeVagas: atividadeSelecionada.quantidadeVagas,
-            // cidade: atividadeSelecionada.cidade,
-            // sugerida: [],
-            // userId: atividadeSelecionada.user.id
+            titulo: atividadeSelecionada.titulo,
+            descricao: atividadeSelecionada.descricao,
+            modalidade: atividadeSelecionada.modalidade,
+            categoria: atividadeSelecionada.categoria,
+            diasEturnos: atividadeSelecionada.diasEturnos,
+            quantidadeVagas: atividadeSelecionada.quantidadeVagas,
+            cidade: atividadeSelecionada.cidade,
+            sugerida: atividadeSelecionada.sugerida,
+            userId: atividadeSelecionada.user.id,
         }
     });
     const { errors, isSubmitting } = formState;
@@ -59,51 +59,35 @@ export default function VerAtiviade({ atividadeSelecionada, handleButtonSugerir,
     };
 
     const handleSubmitData = async (dataForm) => {
-        console.log(dataForm);
-        // dataForm.sugerida = dataForm.sugerida.filter((element) => typeof(element) === "string").map((element) => parseInt(element));
-        console.log(dataForm);
-        // dataForm.cidade = dataForm.cidade
-        //     .filter((element) => typeof(element) === "string")
-        //     .map((element) => parseInt(element));
-        // if(dataForm.cidade.length < 1) {
-        //     dataForm.cidade = null
-        // } 
-        // if(demandaSelecionada.atividade !== null) {
-        //     dataForm.atividadeId = demandaSelecionada.atividade.id
-        // } else {
-        //     dataForm.atividadeId = null
-        // }
-        // if( demandaSelecionada.atividade !== null ) {
-        //     if( demandaSelecionada.status === 'Aceita' ){
-        //         dataForm.status = 'A reformular';
-        //     } else {
-        //         dataForm.status = 'Aceita';
-        //     }
-        // } else {
-        //     dataForm.status = 'Em avaliação';
-        // }
-        // const token = getCookie('Authorization');
-        // console.log('Dados do formulário solicitada:', dataForm);
-        // try {
-        //     const response = await fetch(`http://localhost:3001/demanda-sugerida/${demandaSelecionada.id}`, {
-        //         method: 'PUT',
-        //         headers: {
-        //             'Authorization': `Bearer ${token}`,
-        //             'Content-Type': 'application/json',
-        //         },
-        //         body: JSON.stringify(dataForm),
-        //     });
+        let listSugerida = dataForm.sugerida.map((element) => element.id).concat(dataForm.sugerida.filter((element) => typeof element === "string").map((element) => parseInt(element))).filter(Boolean);
+        dataForm.sugerida = listSugerida;
+        dataForm.cidade = dataForm.cidade.map((element) => element.id);
+        if(dataForm.cidade.length < 1) {
+            dataForm.cidade = null
+        } 
+        const token = getCookie('Authorization');
+        console.log('Dados do formulário solicitada:', dataForm);
+        try {
+            const response = await fetch(`http://localhost:3001/atividade/${atividadeSelecionada.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dataForm),
+            });
 
-        //     setTimeout(() => {
-        //         closeModal();
-        //     }, 1000);
+            setTimeout(() => {
+                closeModal();
+            }, 1000);
 
-        //     // posso apresentar uma mensagem de sucesso na tela
+            // posso apresentar uma mensagem de sucesso na tela
             
-        // } catch (error) {
-        //     console.log(error);
-        // }
+        } catch (error) {
+            console.log(error);
+        }
     };
+    
 
     useEffect(() => {
         const fetchDemandas = async () => {
@@ -127,6 +111,9 @@ export default function VerAtiviade({ atividadeSelecionada, handleButtonSugerir,
     const handleButtonDemandas = () => {
         setOpenButtonDemandas(!openButtonDemandas);
     }
+    const isDemandaSelecionada = (demanda) => {
+        return atividadeSelecionada.sugerida.some(item => item.id === demanda.id);
+    };
 
     return (
         <>
@@ -192,13 +179,15 @@ export default function VerAtiviade({ atividadeSelecionada, handleButtonSugerir,
                                 <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Ultima alteração</dt>
                                 <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{atividadeSelecionada.updatedAt}</dd>
                             </div>
-                            {(userInfo && demandas.length > 0) && (
+                            {(userInfo && demandas.length > 0 ) && (
+                                demandas.some(item => item.status == "Aceita") && (
                                 <div className="col-span-2">
                                     <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Demanda Relacionada</dt>
-                                    {demandas.map((demanda, i) => (
-                                        <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{demanda.titulo}</dd>
+                                    {demandas.filter(demanda => demanda.status === "Aceita").map((demanda, i) => (
+                                        <dd key={i} className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{demanda.titulo}</dd>
                                     ))}
                                 </div>
+                                )
                             )}
                         </dl>
                         {userInfo && (
@@ -254,7 +243,7 @@ export default function VerAtiviade({ atividadeSelecionada, handleButtonSugerir,
                         }>
                             <div className="flex justify-between items-center py-4 my-4 rounded-t border-y sm:mb-5 dark:border-gray-600">
                                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                                    Validar Demanda
+                                    Validar Atividade
                                 </h3>
                             </div>
                             <form 
@@ -276,7 +265,6 @@ export default function VerAtiviade({ atividadeSelecionada, handleButtonSugerir,
                                         <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.status.message}</p>
                                     )}
                                     </div>
-                                    {/*
                                     <div>
                                         <label htmlFor="demandas" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Relacionar atividade</label>
                                         <div className="relative">
@@ -298,31 +286,32 @@ export default function VerAtiviade({ atividadeSelecionada, handleButtonSugerir,
                                                 : "hidden"}
                                             >
                                                 {demandasSugeridas.map((demanda, i) => (
-                                                    <li
-                                                    key={i}
-                                                    className="px-2 py-1 hover:bg-gray-100 cursor-pointer"
-                                                    >
-                                                    <div className="flex items-center">
-                                                        <input
-                                                            {...register(`sugerida[${demanda.id}]`)}
-                                                            value={demanda.id}
-                                                            id={`checkbox-item-${i}`}
-                                                            type="checkbox"
-                                                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                                                        />
-                                                        <label
-                                                            htmlFor={`checkbox-item-${i}`}
-                                                            className="w-full ml-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300"
+                                                    isDemandaSelecionada(demanda) ? null : (
+                                                        <li
+                                                        key={i}
+                                                        className="px-2 py-1 hover:bg-gray-100 cursor-pointer"
                                                         >
-                                                            {demanda.titulo}
-                                                        </label>
-                                                    </div>
-                                                    </li>
+                                                            <div className="flex items-center">
+                                                                <input
+                                                                    {...register(`sugerida[${demanda.id}]`)}
+                                                                    value={demanda.id}
+                                                                    id={`checkbox-item-${i}`}
+                                                                    type="checkbox"
+                                                                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+                                                                />
+                                                                <label
+                                                                    htmlFor={`checkbox-item-${i}`}
+                                                                    className="w-full ml-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300"
+                                                                >
+                                                                    {demanda.titulo}
+                                                                </label>
+                                                            </div>
+                                                        </li>
+                                                    )
                                                 ))}
                                             </ul>
                                         </div>
                                     </div>
-                                                */}
                                 </div>
                                 <div className="flex items-center space-x-4">
                                     <button 

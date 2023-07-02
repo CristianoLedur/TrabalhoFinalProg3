@@ -1,18 +1,61 @@
 'use client';
 import React, {useState, useEffect} from 'react';
 
+import { getCookie } from 'cookies-next';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 
+
 const schema = Yup.object().shape({
-    passwordAntiga: Yup.string().min(6, 'A senha antiga deve ter pelo menos 6 caracteres').required('Campo obrigatório'),
-    password: Yup.string().min(6, 'A nova senha deve ter pelo menos 6 caracteres').required('Campo obrigatório'),
-    confirmPassword: Yup.string().oneOf([Yup.ref('password'), null], 'As senhas não correspondem').required('Campo obrigatório'),
+    passwordAntigo: Yup.string().required('Campo obrigatório').min(6),
+    password: Yup.string().required('Campo obrigatório').min(6),
+    passwordConfirma: Yup.string().when('password', (password, field) =>
+        password ? field.required('Campo obrigatório').oneOf([Yup.ref('password')]) : field
+    ),
 });
 
 export default function AlterarSenha({ closeModal, usuarioSelecionado}) {
-    
+    const { register, handleSubmit, formState } = useForm({
+        mode: 'onSubmit',
+        resolver: yupResolver(schema),
+        defaultValues: {
+            status: usuarioSelecionado.status,
+            nome: usuarioSelecionado.nome,
+            email: usuarioSelecionado.email,
+            tipoUsuario: usuarioSelecionado.tipoUsuario, 
+            cidadeId: usuarioSelecionado.cidade.id,
+        }
+    });
+    const { errors, isSubmitting } = formState;
+
+    const handleSubmitData = async (dataForm) => {
+        console.log(dataForm);
+        const token = getCookie('Authorization');
+        console.log('Dados do formulário solicitada:', dataForm);
+        try {
+            const response = await fetch(`http://localhost:3001/user/${usuarioSelecionado.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dataForm),
+            });
+
+            if (response.ok) {
+                setTimeout(() => {
+                  closeModal();
+                }, 1000);
+                // Apresentar mensagem de sucesso na tela
+            } else {
+                const errorData = await response.json(); // Obter informações de erro do corpo da resposta
+                console.log('Erro:', errorData);
+            }  
+        } catch (error) {
+            console.log(error);
+        }
+    };
     return (
         <>
             <div id="updateProductModal" tabIndex="-1" aria-hidden="true" className="flex overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full bg-gray-700/50">
@@ -41,22 +84,22 @@ export default function AlterarSenha({ closeModal, usuarioSelecionado}) {
                                 
                                 <div>
                                     <label 
-                                        htmlFor="passwordAntiga" 
+                                        htmlFor="passwordAntigo" 
                                         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                                     >
                                         Senha antiga
                                     </label>
                                     <input 
                                         type="password" 
-                                        name="passwordAntiga" 
-                                        id="passwordAntiga" 
-                                        { ...register('passwordAntiga')}
+                                        name="passwordAntigo" 
+                                        id="passwordAntigo" 
+                                        { ...register('passwordAntigo')}
                                         placeholder="••••••••" 
                                         className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                                         required="" 
                                     />
-                                    {errors.passwordAntiga && (
-                                        <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.passwordAntiga.message}</p>
+                                    {errors.passwordAntigo && (
+                                        <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.passwordAntigo.message}</p>
                                     )}
                                 </div>
                                 <div>
@@ -88,24 +131,28 @@ export default function AlterarSenha({ closeModal, usuarioSelecionado}) {
                                     </label>
                                     <input 
                                         type="password" 
-                                        name="confirm-password" 
-                                        id="confirm-password" 
+                                        name="passwordConfirma" 
+                                        id="passwordConfirma" 
                                         placeholder="••••••••"
-                                        { ...register('confirmPassword')}
+                                        { ...register('passwordConfirma')}
                                         className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                                         required="" 
                                     />
-                                    {errors.confirmPassword && (
-                                        <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.confirmPassword.message}</p>
+                                    {errors.passwordConfirma && (
+                                        <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.passwordConfirma.message}</p>
                                     )}
                                 </div>
                                 
                             </div>    
                             <div className="flex items-center space-x-4">
-                                <button type="submit" className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
-                                    Alterar senha
+                                <button 
+                                    disabled={isSubmitting}
+                                    type="submit" className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                                    {isSubmitting ? 'Alterando...' : 'Alterar senha'}
                                 </button>
-                                <button type="button" className="text-red-600 inline-flex items-center hover:text-white border border-red-600 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">
+                                <button 
+                                    onClick={closeModal}
+                                    type="button" className="text-red-600 inline-flex items-center hover:text-white border border-red-600 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">
                                     <svg className="mr-1 -ml-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd"></path></svg>
                                     Cancelar
                                 </button>

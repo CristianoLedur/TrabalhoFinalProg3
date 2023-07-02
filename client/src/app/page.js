@@ -1,5 +1,6 @@
-import { Link } from 'next/link';
+
 export default function Home() {
+  
   return (
     <div className="bg-white">
       <div className="isolate px-6 pt-14 lg:px-8">

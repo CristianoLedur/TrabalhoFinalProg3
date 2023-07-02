@@ -59,6 +59,7 @@ export default function MinhasDemandas() {
     };
 
     useEffect(() => {
+        setIsLoading(true);
         closeModal();
         const fetchAtividades = async () => {
             try {
@@ -73,6 +74,8 @@ export default function MinhasDemandas() {
                 setBackendData(data);
             } catch (error) {
                 console.log(error);
+            } finally {
+                setIsLoading(false);
             }
         };
         fetchAtividades();
@@ -80,42 +83,50 @@ export default function MinhasDemandas() {
 
     return (
         <>
-            <ListarDemanda 
-                data={backendData}
-                modalStates={modalStates}
-                CRUD={CRUD}
-                openModal={openModal}
-                closeModal={closeModal}
-                fetchDemanda={fetchDemanda}
-                isLoading={isLoading}
-            />
-            {modalStates.read && (
-                <VerDemanda
-                    demandaSelecionada={demandaSelecionada}
-                    fetchDemanda={fetchDemanda}
-                    closeModal={closeModal}
+            <section>
+                <ListarDemanda 
+                    data={backendData}
+                    modalStates={modalStates}
+                    CRUD={CRUD}
                     openModal={openModal}
-                />
-            )}
-            {modalStates.update && (
-                demandaSelecionada.tipoDemanda === 'sugerida' ? (
-                    <EditarSugerida
-                        demandaSelecionada={demandaSelecionada}
-                        closeModal={closeModal}
-                    />
-                ) : (
-                    <EditarSolicitada
-                        demandaSelecionada={demandaSelecionada}
-                        closeModal={closeModal}
-                    />
-                )
-            )}
-            {modalStates.delete && (
-                <ExcluirDemanda 
-                    demandaSelecionada={demandaSelecionada}
                     closeModal={closeModal}
+                    fetchDemanda={fetchDemanda}
+                    isLoading={isLoading}
                 />
-            )}
+            </section>
+            <section>
+                {modalStates.read && (
+                    <VerDemanda
+                        demandaSelecionada={demandaSelecionada}
+                        fetchDemanda={fetchDemanda}
+                        closeModal={closeModal}
+                        openModal={openModal}
+                    />
+                )}
+            </section>
+            <section>
+                {modalStates.update && (
+                    demandaSelecionada.tipoDemanda === 'sugerida' ? (
+                        <EditarSugerida
+                            demandaSelecionada={demandaSelecionada}
+                            closeModal={closeModal}
+                        />
+                    ) : (
+                        <EditarSolicitada
+                            demandaSelecionada={demandaSelecionada}
+                            closeModal={closeModal}
+                        />
+                    )
+                )}
+            </section>
+            <section>
+                {modalStates.delete && (
+                    <ExcluirDemanda 
+                        demandaSelecionada={demandaSelecionada}
+                        closeModal={closeModal}
+                    />
+                )}
+            </section>
         </>
     )
 }
