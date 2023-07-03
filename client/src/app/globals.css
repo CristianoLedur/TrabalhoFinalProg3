@@ -26,24 +26,13 @@ main {
   width: 100%;
 }
 
-.logo-if {
-  font-family: 'Source Code Pro', monospace;
-  font-weight: 800;
-  color: blueviolet;
-  font-size: 22px;
-}
-.logo-connect {
-  font-family: 'Source Code Pro', monospace;
-  font-weight: 900;
-  color: blue;
-  font-size: 23px;
-}
+
 
 .box-profile  {
   height: calc(100vh - 61px - 112px);
 }
 
-.box-logout {
+.box-logout, .box-home {
   height: calc(100vh - 60px - 112px);
   width: 100vw;
   display: flex;
