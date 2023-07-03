@@ -43,7 +43,7 @@ export default function Header() {
                                 Open main menu
                             </span>
                             <svg 
-                                className={menuAberto ? "w-6 h-6 " : "w-6 h-6 hidden"} 
+                                className={menuAberto ? "w-6 h-6 hidden " : "w-6 h-6 "} 
                                 fill="currentColor" 
                                 viewBox="0 0 20 20" 
                                 xmlns="http://www.w3.org/2000/svg"
@@ -56,7 +56,7 @@ export default function Header() {
                                 </path>
                             </svg>
                             <svg 
-                                className={menuAberto ? "w-6 h-6 hidden" : "w-6 h-6"}
+                                className={menuAberto ? "w-6 h-6 " : "w-6 h-6 hidden"}
                                 fill="currentColor" 
                                 viewBox="0 0 20 20" 
                                 xmlns="http://www.w3.org/2000/svg"
@@ -71,7 +71,7 @@ export default function Header() {
                         </button>
                     </div>
                     <div 
-                        className={menuAberto ? "hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1" : "justify-between items-center w-full lg:flex lg:w-auto lg:order-1"}
+                        className={menuAberto ? " justify-between items-center w-full lg:flex lg:w-auto lg:order-1" : "hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1"}
                         id="mobile-menu-2"
                     >
                         <ul 

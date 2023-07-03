@@ -8,6 +8,35 @@ import Paginacao from '../../Paginacao';
 
 export default function ListarDemanda({ openModal, data, fetchDemanda, isLoading}) {
     const [filtro, setFiltro] = useState('');
+    const dataFiltrada = data.filter((demanda) => {
+        const filtroLowerCase = filtro.toLowerCase();
+        const tituloLowerCase = demanda.titulo ? demanda.titulo.toLowerCase() : '';
+        const tipoDemandaLowerCase = demanda.titulo ? demanda.tipoDemanda.toLowerCase() : '';
+        
+        return (
+            tituloLowerCase.includes(filtroLowerCase) ||
+            tipoDemandaLowerCase.includes(filtroLowerCase)
+        );
+    });
+    const listaRenderizada = filtro ? dataFiltrada : data;
+    const [paginaAtual, setPaginaAtual] = useState(1);
+    const itensPorPagina = 10;
+
+    const indiceInicial = (paginaAtual - 1) * itensPorPagina;
+    const indiceFinal = indiceInicial + itensPorPagina;
+    const itensPaginaAtual = listaRenderizada.slice(indiceInicial, indiceFinal);
+  
+    const handleProximaPagina = () => {
+      setPaginaAtual(paginaAtual + 1);
+    };
+  
+    const handlePaginaAnterior = () => {
+      setPaginaAtual(paginaAtual - 1);
+    };
+
+    const handlePaginaAtual = (value) => {
+        setPaginaAtual(value);
+    };
 
     const handleOpenModal = (modalType, itemId, tipoDemanda) => {
         fetchDemanda(tipoDemanda, itemId);
@@ -20,18 +49,8 @@ export default function ListarDemanda({ openModal, data, fetchDemanda, isLoading
         setFiltro(valor);
     };
 
-    const dataFiltrada = data.filter((demanda) => {
-        const filtroLowerCase = filtro.toLowerCase();
-        const tituloLowerCase = demanda.titulo ? demanda.titulo.toLowerCase() : '';
-        const tipoDemandaLowerCase = demanda.titulo ? demanda.tipoDemanda.toLowerCase() : '';
-        
-        return (
-            tituloLowerCase.includes(filtroLowerCase) ||
-            tipoDemandaLowerCase.includes(filtroLowerCase)
-        );
-    });
+    
 
-    const listaRenderizada = filtro ? dataFiltrada : data;
     return (
         <>
             {isLoading ? (
@@ -45,7 +64,7 @@ export default function ListarDemanda({ openModal, data, fetchDemanda, isLoading
                                     onChangeFiltro={handleChangeFiltro}
                                 />
                             </div>
-                            <div className="overflow-x-auto">
+                            <div className="overflow-x-auto min-h-[500px]">
                                 <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                         <tr>
@@ -59,12 +78,12 @@ export default function ListarDemanda({ openModal, data, fetchDemanda, isLoading
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {listaRenderizada.length === 0 ? (
+                                        {itensPaginaAtual.length === 0 ? (
                                             <tr className="border-b dark:border-gray-700">
                                                 <td colSpan={6} className="text-center px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">Não há dados disponíveis.</td>
                                             </tr>
                                         ) : (
-                                            listaRenderizada.map((demanda, i) => (
+                                            itensPaginaAtual.map((demanda, i) => (
                                             <tr 
                                                 key={i}
                                                 className="border-b dark:border-gray-700"
@@ -95,7 +114,14 @@ export default function ListarDemanda({ openModal, data, fetchDemanda, isLoading
                                     </tbody>
                                 </table>
                             </div>
-                            <Paginacao />
+                            <Paginacao 
+                                paginaAtual={paginaAtual}
+                                handlePaginaAtual={handlePaginaAtual}
+                                total={listaRenderizada.length}
+                                totalPaginas={Math.ceil(listaRenderizada.length / itensPorPagina)}
+                                handlePaginaAnterior={handlePaginaAnterior}
+                                handleProximaPagina={handleProximaPagina}
+                            />
                         </div>
                     </div>
                 </section>

@@ -7,21 +7,27 @@ import React, { useState, useEffect  } from 'react';
 
 export default function Dashboard() {
     const { userInfo } = useUserContext();
-    const [ drawerNavigation, setDrawerNavigation ] = useState(true);
-    const [ appsDropdown, setAppsDropdown ] = useState(true);
-    const [ dropdown, setDropdown ] = useState(true);
+    const [ drawerNavigation, setDrawerNavigation ] = useState(false);
+    const [ appsDropdown, setAppsDropdown ] = useState(false);
+    const [ dropdown, setDropdown ] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
     const handleToggleDrawerNavigation = () => {
         setDrawerNavigation(!drawerNavigation);
+        setAppsDropdown(false);
+        setDropdown(false);
     };
 
     const handleToggleAppsDropwdown = () => {
         setAppsDropdown(!appsDropdown);
+        setDrawerNavigation(false);
+        setDropdown(false);
     };
 
     const handleToggleDropdown = () => {
         setDropdown(!dropdown);
+        setAppsDropdown(false);
+        setDrawerNavigation(false);
     };
 
     return (

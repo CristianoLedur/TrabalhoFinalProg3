@@ -34,8 +34,8 @@ export default function UserDropdown(props) {
         <div
             className={
                 props.dropdown
-                ? "hidden"
-                : "z-50 my-4 w-56 text-base list-none bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600 rounded-xl absolute right-[10px] top-full"
+                ? "z-50 my-4 w-56 text-base list-none bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600 rounded-xl absolute right-[10px] top-full" 
+                : "hidden"
             }
             id="dropdown"
         >
