@@ -13,5 +13,3 @@ const databaseConfig = {
 };
 
 export default databaseConfig;
-
-/* Qual a função de cada um desses campos? */

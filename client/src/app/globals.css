@@ -21,19 +21,42 @@ body, html {
 }
 
 main {
-  min-height: calc(100vh - 64px - 181px);
+  min-height: calc(100vh - 60px - 110px);
   height: 100%;
   width: 100%;
 }
 
-.box-profile {
-  height: calc(100vh - 61px - 165px);
+.logo-if {
+  font-family: 'Source Code Pro', monospace;
+  font-weight: 800;
+  color: blueviolet;
+  font-size: 22px;
+}
+.logo-connect {
+  font-family: 'Source Code Pro', monospace;
+  font-weight: 900;
+  color: blue;
+  font-size: 23px;
+}
+
+.box-profile  {
+  height: calc(100vh - 61px - 112px);
 }
 
 .box-logout {
-  height: calc(100vh - 60px - 165px);
+  height: calc(100vh - 60px - 112px);
   width: 100vw;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.box-login {
+  min-height: calc(100vh - 60px - 112px);
+  display: flex;
+  align-items: center;
+} 
+
+.tableBody {
+  min-height: 450px;
 }

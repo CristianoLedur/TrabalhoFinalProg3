@@ -3,8 +3,10 @@ import React, {useState, useEffect} from 'react';
 import { getCookie } from 'cookies-next';
 import NotFound from '../not-found';
 import CardUser from '../../components/Usuario/Ver';
+import { useUserContext } from '@/context';
 
 export default function Usuarios() {
+    const { userInfo } = useUserContext();
     const [ user, setUser ] = useState(null);
     const token = getCookie('Authorization');
     const [ backendUsuarios, setBackendUsuarios ] = useState([{}]);
@@ -65,7 +67,6 @@ export default function Usuarios() {
                     <section className="bg-gray-50 dark:bg-gray-900 p-3 sm:p-5">
                         <div className="mx-auto max-w-screen-xl px-4 lg:px-12">
                             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-                                {/* componente de busca */}
                                 <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                         <tr>
@@ -110,7 +111,7 @@ export default function Usuarios() {
                                                     </div>
                                                     </td>
                                                     <td className="px-6 py-4">
-                                                        {/* <!-- Modal toggle --> */}
+
                                                         <button
                                                             onClick={() => fetchUsuario(usuario.email)}  
                                                             data-modal-show="editUserModal" 

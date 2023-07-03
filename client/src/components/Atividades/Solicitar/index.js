@@ -21,7 +21,6 @@ const schema = Yup.object().shape({
 export default function SolicitarAtiviade({ atividadeSelecionada, closeModal }) {
     const { userInfo } = useUserContext();
     const [ demandaCadastrada, setDemandaCadastrada] = useState('');
-
     const { register, handleSubmit, formState } = useForm({
         mode: 'onSubmit',
         resolver: yupResolver(schema),
@@ -39,7 +38,6 @@ export default function SolicitarAtiviade({ atividadeSelecionada, closeModal }) 
     const { errors, isSubmitting } = formState;
 
     const handleSubmitData = async (dataForm) => {
-        console.log(dataForm);
         const token = getCookie('Authorization');
         try {
             const response = await fetch('http://localhost:3001/demanda-solicitada', {
@@ -54,10 +52,8 @@ export default function SolicitarAtiviade({ atividadeSelecionada, closeModal }) 
             const data = await response.json();
 
             setTimeout(() => {
-                closeModal();
-            }, 1000);
-
-            // posso apresentar uma mensagem de sucesso na tela
+                window.location.reload();
+            }, 500);
             
         } catch (error) {
             setDemandaCadastrada('Você já solicitou esta demanda');
@@ -68,9 +64,7 @@ export default function SolicitarAtiviade({ atividadeSelecionada, closeModal }) 
     return (
         <div id="defaultModal" tabindex="-1" aria-hidden="true" className="flex overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full bg-gray-700/50">
             <div className="relative p-4 w-full max-w-2xl h-full md:h-auto">
-                {/* <!-- Modal content --> */}
                 <div className="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
-                    {/* <!-- Modal header --> */}
                     <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600">
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                             Solicitar Atividade
@@ -82,7 +76,7 @@ export default function SolicitarAtiviade({ atividadeSelecionada, closeModal }) 
                             <span className="sr-only">Close modal</span>
                         </button>
                     </div>
-                    {/* <!-- Modal body --> */}
+
                     <form 
                         onSubmit={handleSubmit(handleSubmitData)}
                         method="POST"

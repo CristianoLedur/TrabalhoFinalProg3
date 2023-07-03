@@ -23,6 +23,9 @@ module.exports = {
       ],
       'sans': [
         'Inter', 
+      ],
+      'logo': [
+        'Source Code Pro',
       ]
     },
   },

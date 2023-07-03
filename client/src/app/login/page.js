@@ -1,13 +1,14 @@
 'use client'
 import SingIn from '../../components/SingIn/index';
 import SingUp from '../../components/SingUp/index';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useUserContext } from '../../context/user/UserContext';
 
 
 export default function Login() {
     const [ status, setState ] = useState(true);
     const { userInfo } = useUserContext();
+    const [isLoading, setIsLoading] = useState(false);
     
     function changeStatus() {
         setState(!status);
@@ -41,9 +42,10 @@ export default function Login() {
             console.log(error);
         }
     }
+
     return (
         <>
-            {!userInfo ? (
+            { !isLoading && !userInfo && (
                 status 
                 ? <SingIn 
                     ToggleCompLogin={changeStatus}
@@ -51,7 +53,8 @@ export default function Login() {
                 : <SingUp 
                     ToggleCompLogin={changeStatus}
                 />
-            ) : (
+            )}
+            { !isLoading && userInfo && Object.keys(userInfo).length > 0 && (
                 <div className="relative box-logout">
                     <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
                         <div className="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">

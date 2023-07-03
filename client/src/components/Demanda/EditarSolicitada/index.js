@@ -19,7 +19,6 @@ const schema = Yup.object().shape({
 export default function EditarSolicitada({ demandaSelecionada, closeModal }) {
     const token = getCookie('Authorization');
     const [ atividadeRelacionada, setAtividadeRelacionada ] = useState('');
-    // const [ backendCidades, setBackendCidades ] = useState([{}]);
     const { register, handleSubmit, formState } = useForm({
         mode: 'onSubmit',
         resolver: yupResolver(schema),
@@ -38,7 +37,6 @@ export default function EditarSolicitada({ demandaSelecionada, closeModal }) {
     const { errors, isSubmitting } = formState;
 
     const handleSubmitData = async (dataForm) => {
-       
         if( demandaSelecionada.atividade !== null ) {
             if( demandaSelecionada.status === 'Aceita' ){
                 dataForm.status = 'A reformular';
@@ -49,7 +47,6 @@ export default function EditarSolicitada({ demandaSelecionada, closeModal }) {
             dataForm.status = 'Em avaliação';
         }
         const token = getCookie('Authorization');
-        console.log(dataForm);
         try {
             const response = await fetch(`http://localhost:3001/demanda-solicitada/${demandaSelecionada.id}`, {
                 method: 'PUT',
@@ -60,25 +57,15 @@ export default function EditarSolicitada({ demandaSelecionada, closeModal }) {
                 body: JSON.stringify(dataForm),
             });
             if (response.ok) {
-               console.log("OK");
-            } else {
-                console.log("Falhou");
+                setTimeout(() => {
+                    window.location.reload();
+                }, 500);
             }
-
-            setTimeout(() => {
-                closeModal();
-            }, 1000);
-
-            // posso apresentar uma mensagem de sucesso na tela
-            
         } catch (error) {
             console.log(error);
         }
     };
 
-    const handleBoxCidades = () => {
-        setToggleBoxCidades(!toggleBoxCidades);
-    }
     const fetchAtividadeRelacionada = async () => {
         try {
             const response = await fetch(`http://localhost:3001/atividade?id=${demandaSelecionada.atividadeId}`);
@@ -96,9 +83,8 @@ export default function EditarSolicitada({ demandaSelecionada, closeModal }) {
     return (
         <div id="updateProductModal" tabIndex="-1" aria-hidden="true" className="flex overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full bg-gray-700/50">
             <div className="relative p-4 w-full max-w-2xl h-full md:h-auto">
-                {/* <!-- Modal content --> */}
                 <div className="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
-                    {/* <!-- Modal header --> */}
+
                     <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600">
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                             Editar Demanda

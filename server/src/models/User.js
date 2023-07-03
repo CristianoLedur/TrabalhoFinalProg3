@@ -21,7 +21,6 @@ class User extends Model {
         this.addHook('beforeSave', async (user) => {
             if(user.password) {
                 user.password_hash = await bcrypt.hash(user.password, 8);
-                /* poderia usar genSalt para aumentar a segurança */
             }
         });
 
@@ -33,7 +32,7 @@ class User extends Model {
     }
 
     static associate(models) {
-        /* Relacionar com uma ou várias cidades */
+
         this.belongsTo(models.Cidade, {foreignKey: 'cidadeId', as: 'cidade'});
         this.hasMany(models.Atividade, {foreignKey: 'userId', as: 'atividade'});
         this.hasMany(models.Sugerida, {foreignKey: 'userId', as: 'sugerida'});

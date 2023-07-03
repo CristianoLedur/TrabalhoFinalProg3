@@ -7,7 +7,6 @@ import * as Yup from 'yup';
 
 class UserController {
 
-    // Index (GET): array
     async index(req, res) {
         let users = await User.findAll({
             attributes:['id', 'nome', 'email', 'status', 'tipoUsuario'],
@@ -20,17 +19,17 @@ class UserController {
                 {
                     model: Atividade,
                     as: 'atividade',
-                    attributes:['id','titulo', 'modalidade', 'categoria', 'updatedAt', 'status']
+                    attributes:['id','titulo', 'modalidade', 'categoria', 'createdAt', 'status']
                 },
                 {
                     model: Sugerida,
                     as: 'sugerida',
-                    attributes:['id','titulo', 'tipoDemanda', 'updatedAt', 'status']
+                    attributes:['id','titulo', 'tipoDemanda', 'createdAt', 'status']
                 },
                 {
                     model: Solicitada,
                     as: 'solicitada',
-                    attributes:['id','titulo', 'tipoDemanda', 'updatedAt', 'status']
+                    attributes:['id','titulo', 'tipoDemanda', 'createdAt', 'status']
                 }
             ]
             
@@ -38,10 +37,8 @@ class UserController {
         return res.json( users );
     }
 
-    // Show (GET): id .../user/id
     async show(req, res) {
 
-        // schema = pode se referir à especificação dos formatos de dados esperados nas solicitações e respostas da API.
         const schema = Yup.object().shape({
             email: Yup.string().email().required(),
         });
@@ -64,17 +61,17 @@ class UserController {
                 {
                     model: Atividade,
                     as: 'atividade',
-                    attributes:['id','titulo', 'modalidade', 'categoria', 'updatedAt', 'status']
+                    attributes:['id','titulo', 'modalidade', 'categoria', 'createdAt',  'status']
                 },
                 {
                     model: Sugerida,
                     as: 'sugerida',
-                    attributes:['id','titulo', 'tipoDemanda', 'updatedAt', 'status']
+                    attributes:['id','titulo', 'tipoDemanda', 'createdAt', 'status']
                 },
                 {
                     model: Solicitada,
                     as: 'solicitada',
-                    attributes:['id','titulo', 'tipoDemanda', 'updatedAt', 'status']
+                    attributes:['id','titulo', 'tipoDemanda', 'createdAt', 'status']
                 }
             ]
             
@@ -83,7 +80,6 @@ class UserController {
         return res.json( user );
     }
 
-    // Store (POST): new ...
     async store(req, res) {
         const schema = Yup.object().shape({
             nome: Yup.string().required().min(2),
@@ -103,7 +99,6 @@ class UserController {
             where: { email }
         });
 
-        // não encontra usuário ou não existe usuário
         if( !user || user.length == 0 ) {
             user = await User.create(req.body);
             return res.json({
@@ -120,7 +115,6 @@ class UserController {
 
     }
 
-    // Update (PUT ou PATCH): id
     async update(req, res) {
 
         const schemaID = Yup.object().shape({
@@ -153,14 +147,11 @@ class UserController {
 
         let user = await User.findByPk(id);
         
-        // Não encontrou o usuário 
         if( !user || user.length == 0 ) {
             return res.status(400).json({ error: 'User not found.' });
         }
 
-        // Email diferente do atual (o usuário quer trocar o email)
         if( email !== user.email ) {
-            // Verifica se tem alguém com esse novo email
             const userExist = await User.findOne({
                 where: { email }
             });
@@ -171,15 +162,12 @@ class UserController {
             }
         }
 
-        // Verifica se passwordAntigo está correto
         const { passwordAntigo } = req.body;
         
-        // erro 401? Erro de digitação?
         if( passwordAntigo && !(await user.checkPassword(passwordAntigo) )) {
             return res.status(401).json({ error: 'Incorrect password. '});
         }
 
-        // Atualiza usando o objeto user (não a classe User)
         await user.update(req.body, {
             where: { id }
         });
@@ -194,7 +182,7 @@ class UserController {
         });
     }
 
-    // Delete (DELETE): id
+
     async destroy(req, res) {
 
         const schema = Yup.object().shape({

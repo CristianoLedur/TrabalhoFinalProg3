@@ -48,7 +48,6 @@ export default function SingUp(props) {
     }, []);
 
     const handleSubmitData = async (dataForm) => {
-        console.log(dataForm);
         try {
             const response = await fetch('http://localhost:3001/user', {
                 method: 'POST',
@@ -89,32 +88,21 @@ export default function SingUp(props) {
                     window.location.reload();
                 }, 200);
             } else {
-                // Tratar o erro de autenticação
-                // console.log(data.error);
+                console.log(data.error);
                 setErro("Email ou senha inválido");
             } 
         } catch (error) {
             setEmailCadastrado('Email já cadastrado');
-            // console.log(error);
+            console.log(error);
         }
     }
     return (
         <section 
-            className="bg-gray-50 dark:bg-gray-900"
+            className="bg-gray-50 dark:bg-gray-900 box-login"
         >
             <div 
-                className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0"
+                className="flex flex-col items-center justify-center px-6 py-8 mx-auto lg:py-0"
             >
-                <a href="/" 
-                    className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
-                >
-                    <img 
-                        className="w-8 h-8 mr-2" 
-                        src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg" 
-                        alt="logo" 
-                    />
-                        Nome site   
-                </a>
                 <div 
                     className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700"
                 >
@@ -131,137 +119,139 @@ export default function SingUp(props) {
                             action="POST"
                             onSubmit={handleSubmit(handleSubmitData)}
                         >
-                            <div>
-                                <label 
-                                    htmlFor="name" 
-                                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                >
-                                    Nome
-                                </label>
-                                <input 
-                                    type="text" 
-                                    name="name" 
-                                    id="name"
-                                    autoFocus
-                                    { ...register('nome')}
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                                    placeholder="João da Lapa" 
-                                    required="" 
-                                />
-                                {errors.nome && (
-                                    <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.nome.message}</p>
-                                )}
-                            </div>
-                            <div>
-                                <label 
-                                    htmlFor="email" 
-                                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                >
-                                    Email
-                                </label>
-                                <input 
-                                    type="email" 
-                                    name="email" 
-                                    id="email"
-                                    { ...register('email')}
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                                    placeholder="name@company.com" 
-                                    required="" 
-                                />
-                                {errors.email && (
-                                    <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.email.message}</p>
-                                )}
-                                {emailCadastrado && (
-                                    <p className="mt-2 text-sm text-red-600 dark:text-red-500">{emailCadastrado}</p>
-                                )}
-                            </div>
-                            <div>
-                                <label 
-                                    htmlFor="password" 
-                                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                >
-                                    Senha
-                                </label>
-                                <input 
-                                    type="password" 
-                                    name="password" 
-                                    id="password" 
-                                    { ...register('password')}
-                                    placeholder="••••••••" 
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                                    required="" 
-                                />
-                                {errors.password && (
-                                    <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.password.message}</p>
-                                )}
-                            </div>
-                            <div>
-                                <label 
-                                    htmlFor="confirm-password" 
-                                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                >
-                                    Confirmar senha
-                                </label>
-                                <input 
-                                    type="password" 
-                                    name="confirm-password" 
-                                    id="confirm-password" 
-                                    placeholder="••••••••"
-                                    { ...register('confirmPassword')}
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                                    required="" 
-                                />
-                                {errors.confirmPassword && (
-                                    <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.confirmPassword.message}</p>
-                                )}
-                            </div>
-                            <div>
-                                <label 
-                                    htmlFor="cidades" 
-                                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                >
-                                    Cidade
-                                </label>
-                                <select 
-                                    defaultValue="cidades"
-                                    id="cidades"
-                                    { ...register('cidadeId')}
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                >
-                                    <option value="">Selecione uma opção</option>
-                                    {backendCidades.map((cidade) => (
-                                        <option 
-                                            key={cidade.id}
-                                            value={cidade.id}
-                                        >
-                                            {cidade.nome}
-                                        </option>
-                                    ))}
-                                </select>
-                                {errors.cidadeId && (
-                                    <p className="mt-2 text-sm text-red-600 dark:text-red-500">Selecione uma opção</p>
-                                )}
-                            </div>
-                            <div>
-                                <label 
-                                    htmlFor="tipoUsuario" 
-                                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                                >
-                                    Papel
-                                </label>
-                                <select 
-                                    id="tipoUsuario"
-                                    { ...register('tipoUsuario')}
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                >
-                                    <option value="">Selecione uma opção</option>
-                                    <option value="Aluno">Aluno</option>
-                                    <option value="Servidor">Servidor</option>
-                                    <option value="Comunidade Externa">Comunidade Externa</option>
-                                </select>
-                                {errors.tipoUsuario && (
-                                    <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.tipoUsuario.message}</p>
-                                )}
+                            <div className="grid gap-4 mb-4 sm:grid-cols-2">
+                                <div>
+                                    <label 
+                                        htmlFor="name" 
+                                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                    >
+                                        Nome
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        name="name" 
+                                        id="name"
+                                        autoFocus
+                                        { ...register('nome')}
+                                        className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                                        placeholder="João da Lapa" 
+                                        required="" 
+                                    />
+                                    {errors.nome && (
+                                        <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.nome.message}</p>
+                                    )}
+                                </div>
+                                <div>
+                                    <label 
+                                        htmlFor="email" 
+                                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                    >
+                                        Email
+                                    </label>
+                                    <input 
+                                        type="email" 
+                                        name="email" 
+                                        id="email"
+                                        { ...register('email')}
+                                        className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                                        placeholder="name@company.com" 
+                                        required="" 
+                                    />
+                                    {errors.email && (
+                                        <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.email.message}</p>
+                                    )}
+                                    {emailCadastrado && (
+                                        <p className="mt-2 text-sm text-red-600 dark:text-red-500">{emailCadastrado}</p>
+                                    )}
+                                </div>
+                                <div>
+                                    <label 
+                                        htmlFor="password" 
+                                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                    >
+                                        Senha
+                                    </label>
+                                    <input 
+                                        type="password" 
+                                        name="password" 
+                                        id="password" 
+                                        { ...register('password')}
+                                        placeholder="••••••••" 
+                                        className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                                        required="" 
+                                    />
+                                    {errors.password && (
+                                        <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.password.message}</p>
+                                    )}
+                                </div>
+                                <div>
+                                    <label 
+                                        htmlFor="confirm-password" 
+                                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                    >
+                                        Confirmar senha
+                                    </label>
+                                    <input 
+                                        type="password" 
+                                        name="confirm-password" 
+                                        id="confirm-password" 
+                                        placeholder="••••••••"
+                                        { ...register('confirmPassword')}
+                                        className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                                        required="" 
+                                    />
+                                    {errors.confirmPassword && (
+                                        <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.confirmPassword.message}</p>
+                                    )}
+                                </div>
+                                <div>
+                                    <label 
+                                        htmlFor="cidades" 
+                                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                    >
+                                        Cidade
+                                    </label>
+                                    <select 
+                                        defaultValue="cidades"
+                                        id="cidades"
+                                        { ...register('cidadeId')}
+                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    >
+                                        <option value="">Selecione uma opção</option>
+                                        {backendCidades.map((cidade) => (
+                                            <option 
+                                                key={cidade.id}
+                                                value={cidade.id}
+                                            >
+                                                {cidade.nome}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    {errors.cidadeId && (
+                                        <p className="mt-2 text-sm text-red-600 dark:text-red-500">Selecione uma opção</p>
+                                    )}
+                                </div>
+                                <div>
+                                    <label 
+                                        htmlFor="tipoUsuario" 
+                                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                    >
+                                        Papel
+                                    </label>
+                                    <select 
+                                        id="tipoUsuario"
+                                        { ...register('tipoUsuario')}
+                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    >
+                                        <option value="">Selecione uma opção</option>
+                                        <option value="Aluno">Aluno</option>
+                                        <option value="Servidor">Servidor</option>
+                                        <option value="Comunidade Externa">Comunidade Externa</option>
+                                    </select>
+                                    {errors.tipoUsuario && (
+                                        <p className="mt-2 text-sm text-red-600 dark:text-red-500">{errors.tipoUsuario.message}</p>
+                                    )}
+                                </div>
                             </div>
                             <button 
                                 type="submit" 

@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react';
 import { useUserContext } from '../../../context/user/UserContext';
+import { format } from 'date-fns';
 import { useForm } from 'react-hook-form';
 import { getCookie } from "cookies-next";
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -78,11 +79,9 @@ export default function VerAtiviade({ atividadeSelecionada, handleButtonSugerir,
             });
 
             setTimeout(() => {
-                closeModal();
-            }, 1000);
-
-            // posso apresentar uma mensagem de sucesso na tela
-            
+                window.location.reload();
+            }, 300);
+ 
         } catch (error) {
             console.log(error);
         }
@@ -117,17 +116,14 @@ export default function VerAtiviade({ atividadeSelecionada, handleButtonSugerir,
 
     return (
         <>
-            {/* <!-- Main modal --> */}
             <div 
                 id="readProductModal" 
                 tabIndex="-1" 
                 aria-hidden="true" 
                 className="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full md:inset-0 h-modal md:h-full bg-gray-700/50"
             >
-                <div className="relative p-4 w-full max-w-xl h-full md:h-auto">
-                    {/* <!-- Modal content --> */}
-                    <div className="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
-                        {/* <!-- Modal header --> */}
+                <div className="relative p-4 pt-8 w-full max-w-xl h-full md:h-full ">
+                    <div className="relative p-4 mb-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
                         <div className="flex justify-between mb-4 rounded-t sm:mb-5">
                             <div className="text-lg text-gray-900 md:text-xl dark:text-white">
                                 <h4 className="font-semibold ">
@@ -150,41 +146,39 @@ export default function VerAtiviade({ atividadeSelecionada, handleButtonSugerir,
                         </div>
                         <dl className='grid gap-4 sm:grid-cols-2'>
                             <div className="col-span-2">
-                                <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Descrição</dt>
-                                <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{atividadeSelecionada.descricao}</dd>
+                                <dt className="mb-1 font-semibold leading-none text-gray-900 dark:text-white">Descrição</dt>
+                                <dd className="mb-2 font-light text-gray-500 sm:mb-3 dark:text-gray-400">{atividadeSelecionada.descricao}</dd>
                             </div>
                             {userInfo && (
                                 <div>
-                                    <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Usuario</dt>
-                                    <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{atividadeSelecionada.user.nome}</dd>
+                                    <dt className="mb-1 font-semibold leading-none text-gray-900 dark:text-white">Usuario</dt>
+                                    <dd className="mb-2 font-light text-gray-500 sm:mb-3 dark:text-gray-400">{atividadeSelecionada.user.nome}</dd>
                                 </div>
                             )}
                             <div>
-                                <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Modalidade</dt>
-                                <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{atividadeSelecionada.modalidade}</dd>
+                                <dt className="mb-1 font-semibold leading-none text-gray-900 dark:text-white">Modalidade</dt>
+                                <dd className="mb-2 font-light text-gray-500 sm:mb-3 dark:text-gray-400">{atividadeSelecionada.modalidade}</dd>
                             </div>
                             <div>
-                                <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Categoria</dt>
-                                <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{atividadeSelecionada.categoria}</dd>
+                                <dt className="mb-1 font-semibold leading-none text-gray-900 dark:text-white">Categoria</dt>
+                                <dd className="mb-2 font-light text-gray-500 sm:mb-3 dark:text-gray-400">{atividadeSelecionada.categoria}</dd>
                             </div>
-                            {nCidades > 2 && (
-                                <div className="col-span-2">
-                                    <>
-                                        <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Cidades</dt>
-                                        <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{cidadesString}</dd>
-                                    </>
+                            {atividadeSelecionada.cidade.length > 0 && (
+                                <div className={atividadeSelecionada.cidade.length > 2 && "col-span-2"}>
+                                    <dt className="mb-1 font-semibold leading-none text-gray-900 dark:text-white">Cidades</dt>
+                                    <dd className="mb-2 font-light text-gray-500 sm:mb-3 dark:text-gray-400">{cidadesString}</dd>
                                 </div>
                             )}
                             <div>
-                                <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Ultima alteração</dt>
-                                <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{atividadeSelecionada.updatedAt}</dd>
+                                <dt className="mb-1 font-semibold leading-none text-gray-900 dark:text-white">Data de inserção</dt>
+                                <dd className="mb-2 font-light text-gray-500 sm:mb-3 dark:text-gray-400">{format(new Date(atividadeSelecionada.createdAt), 'dd/MM/yyyy')}</dd>
                             </div>
                             {(userInfo && demandas.length > 0 ) && (
                                 demandas.some(item => item.status == "Aceita") && (
                                 <div className="col-span-2">
-                                    <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Demanda Relacionada</dt>
+                                    <dt className="mb-1 font-semibold leading-none text-gray-900 dark:text-white">Demanda Relacionada</dt>
                                     {demandas.filter(demanda => demanda.status === "Aceita").map((demanda, i) => (
-                                        <dd key={i} className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{demanda.titulo}</dd>
+                                        <dd key={i} className="mb-2 font-light text-gray-500 sm:mb-3 dark:text-gray-400">{demanda.titulo}</dd>
                                     ))}
                                 </div>
                                 )
@@ -227,7 +221,7 @@ export default function VerAtiviade({ atividadeSelecionada, handleButtonSugerir,
                                         </button>
                                     )}
                                 </div> 
-                                {( (userInfo.id === atividadeSelecionada.user.id) && !(atividadeSelecionada.sugerida.length < 1 || atividadeSelecionada.solicitada.length < 1 )) && (             
+                                {( (userInfo.id === atividadeSelecionada.user.id) && !(atividadeSelecionada.sugerida.length < 0 || atividadeSelecionada.solicitada.length < 0 )) && (             
                                     <button 
                                         onClick={() => handleOpenModal('delete', atividadeSelecionada.id)}
                                         type="button" className="inline-flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-900">
@@ -316,12 +310,12 @@ export default function VerAtiviade({ atividadeSelecionada, handleButtonSugerir,
                                 <div className="flex items-center space-x-4">
                                     <button 
                                         type="submit" 
-                                        className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                                        className="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm mt-3 mb-5 px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                                         Validar Atividade
                                     </button>
                                     <button 
                                         onClick={closeModal}
-                                        type="button" className="text-red-600 inline-flex items-center hover:text-white border border-red-600 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">
+                                        type="button" className="text-red-600 inline-flex items-center hover:text-white border border-red-600 hover:bg-red-600 focus:ring-4  mt-3 mb-5 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">
                                         <svg className="mr-1 -ml-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd"></path></svg>
                                         Cancelar
                                     </button>

@@ -17,19 +17,10 @@ export default function Profile() {
     useEffect(() => {
         const dataString = sessionStorage.getItem('user');
         const user = JSON.parse(dataString);
-        // setEmail(user.email);
         fetchUsuario(user.email);
     }, []);
-
-    // useEffect(() => {
-    //     if (email) {
-    //       const encodedEmail = encodeURIComponent(email);
-    //       fetchUsuario(encodedEmail);
-    //     }
-    // }, [email]);
       
     async function fetchUsuario(value) {
-        console.log(value);
         setIsLoading(true);
         try {
             const response = await fetch(`http://localhost:3001/user?email=${value}`,{

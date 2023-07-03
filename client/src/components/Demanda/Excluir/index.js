@@ -19,11 +19,8 @@ export default function ExcluirAtiviade({ demandaSelecionada, closeModal }) {
             });
 
             setTimeout(() => {
-                closeModal();
-            }, 1000);
-
-            // posso apresentar uma mensagem de sucesso na tela
-            
+                window.location.reload();
+            }, 500);
         } catch (error) {
             console.log(error);
         }

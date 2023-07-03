@@ -24,17 +24,14 @@ class Sugerida extends Model {
     }
 
     static associate(models) {
-        /* Relacionar com o usuário que cadastrou */
         this.belongsTo(models.User, {foreignKey: 'userId', as: 'user'});
 
-        /* Relacionar com uma ou várias cidades */ 
         this.belongsToMany(models.Cidade, {
             through: 'sugeridacidade',
             foreignKey: 'sugeridaId',
             as: 'cidade',
         });
 
-        /* Atividade Relacionada */
         this.belongsTo(models.Atividade, {foreignKey: 'atividadeId', as: 'atividade'});
     }
 }

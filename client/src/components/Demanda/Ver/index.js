@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useUserContext } from '../../../context/user/UserContext';
 import { useForm } from 'react-hook-form';
+import { format } from 'date-fns';
 import { getCookie } from "cookies-next";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
@@ -23,7 +24,7 @@ export default function VerDemanda({ demandaSelecionada, handleButtonValidar, cl
         resolver: yupResolver(schema),
         defaultValues: {
             status: demandaSelecionada.status,
-            comentario: demandaSelecionada.status
+            comentario: demandaSelecionada.comentario
         }
     });
 
@@ -58,7 +59,6 @@ export default function VerDemanda({ demandaSelecionada, handleButtonValidar, cl
             try {
                 const res = await fetch('http://localhost:3001/atividades');
                 const atividades = await res.json();
-                //  filtrar por atividades aceitas
                 setBackendAtividades(atividades);
             } catch (error) {
                 console.log(error);
@@ -110,11 +110,9 @@ export default function VerDemanda({ demandaSelecionada, handleButtonValidar, cl
             });
 
             setTimeout(() => {
-                closeModal();
+                window.location.reload();
             }, 1000);
 
-            // posso apresentar uma mensagem de sucesso na tela
-            
         } catch (error) {
             console.log(error);
         }
@@ -135,10 +133,9 @@ export default function VerDemanda({ demandaSelecionada, handleButtonValidar, cl
                     aria-hidden="true" 
                     className="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center w-full md:inset-0 h-modal md:h-full bg-gray-700/50"
                 >
-                    <div className="relative p-4 w-full max-w-xl h-full md:h-auto">
-                        {/* <!-- Modal content --> */}
+                    <div className="relative p-4 w-full max-w-xl h-full md:h-full">
                         <div className="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
-                            {/* <!-- Modal header --> */}
+
                             <div className="flex justify-between mb-4 rounded-t sm:mb-5">
                                 <div className="text-lg text-gray-900 md:text-xl dark:text-white">
                                     <h4 className="font-semibold ">
@@ -158,71 +155,89 @@ export default function VerDemanda({ demandaSelecionada, handleButtonValidar, cl
                                 </div>
                             </div>
                             {demandaSelecionada.tipoDemanda === 'sugerida' ? (
-                                <dl>
-                                    <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Descrição</dt>
-                                    <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{demandaSelecionada.descricao}</dd>
+                                <dl className="grid gap-4 sm:grid-cols-2">
+                                    <div className="col-span-2">
+                                        <dt className="mb-1 font-semibold leading-none text-gray-900 dark:text-white">Descrição</dt>
+                                        <dd className="mb-2 font-light text-gray-500 sm:mb-3 dark:text-gray-400">{demandaSelecionada.descricao}</dd>
+                                    </div>
+                                    
                                     { (userInfo.id !== demandaSelecionada.user.id) && (
-                                        <>
-                                            <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Usuário</dt>
-                                            <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{demandaSelecionada.user.nome}</dd>
-                                        </>  
+                                        <div>
+                                            <dt className="mb-1 font-semibold leading-none text-gray-900 dark:text-white">Usuário</dt>
+                                            <dd className="mb-2 font-light text-gray-500 sm:mb-3 dark:text-gray-400">{demandaSelecionada.user.nome}</dd>
+                                        </div>  
                                     )}
-                                    <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Modalidade</dt>
-                                    <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{demandaSelecionada.modalidade}</dd>
-                                    <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Categoria</dt>
-                                    <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{demandaSelecionada.categoria}</dd>
-                                    <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Disponibilidade</dt>
-                                    <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{demandaSelecionada.diasEturnos}</dd>
+                                    <div>
+                                        <dt className="mb-1 font-semibold leading-none text-gray-900 dark:text-white">Modalidade</dt>
+                                        <dd className="mb-2 font-light text-gray-500 sm:mb-3 dark:text-gray-400">{demandaSelecionada.modalidade}</dd>
+                                    </div>
+                                    <div>
+                                        <dt className="mb-1 font-semibold leading-none text-gray-900 dark:text-white">Categoria</dt>
+                                        <dd className="mb-2 font-light text-gray-500 sm:mb-3 dark:text-gray-400">{demandaSelecionada.categoria}</dd>
+                                    </div>
+                                    <div>
+                                        <dt className="mb-1 font-semibold leading-none text-gray-900 dark:text-white">Disponibilidade</dt>
+                                        <dd className="mb-2 font-light text-gray-500 sm:mb-3 dark:text-gray-400">{demandaSelecionada.diasEturnos}</dd>
+                                    </div>
+                                    <div>
+                                        <dt className="mb-1 font-semibold leading-none text-gray-900 dark:text-white">Data de inserção</dt>
+                                        <dd className="mb-2 font-light text-gray-500 sm:mb-3 dark:text-gray-400">{format(new Date(demandaSelecionada.createdAt), 'dd/MM/yyyy')}</dd>
+                                    </div>
                                     {demandaSelecionada.cidade.length > 0 && (
-                                        <>
-                                            <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Cidades</dt>
-                                            <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{cidadesString}</dd>
-                                        </>
+                                        <div className={demandaSelecionada.cidade.length > 2 && "col-span-2"}>
+                                            <dt className="mb-1 font-semibold leading-none text-gray-900 dark:text-white">Cidades</dt>
+                                            <dd className="mb-2 font-light text-gray-500 sm:mb-3 dark:text-gray-400">{cidadesString}</dd>
+                                        </div>
                                     )}
                                     {demandaSelecionada.comentario !== null && (
-                                        <>
-                                            <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Comentário</dt>
-                                            <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{demandaSelecionada.comentario}</dd>
-                                        </>
+                                        <div className="col-span-2">
+                                            <dt className="mb-1 font-semibold leading-none text-gray-900 dark:text-white">Comentário</dt>
+                                            <dd className="mb-2 font-light text-gray-500 sm:mb-3 dark:text-gray-400">{demandaSelecionada.comentario}</dd>
+                                        </div>
                                     )}
                                     {demandaSelecionada.atividade !== null && (
-                                        <>
-                                            <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Atividade Relacionada</dt>
-                                            <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{demandaSelecionada.atividade.titulo}</dd>
-                                        </>
+                                        <div className="col-span-2">
+                                            <dt className="mb-1 font-semibold leading-none text-gray-900 dark:text-white">Atividade Relacionada</dt>
+                                            <dd className="mb-2 font-light text-gray-500 sm:mb-3 dark:text-gray-400">{demandaSelecionada.atividade.titulo}</dd>
+                                        </div>
                                     )}
-                                    <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Ultima alteração</dt>
-                                    <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{demandaSelecionada.updatedAt}</dd>
                                 </dl>
                             ) : (
-                                <dl>
-                                    <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Observação</dt>
-                                    <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{demandaSelecionada.observacao}</dd>
+                                <dl className="grid gap-4 sm:grid-cols-2">
+                                    <div className="col-span-2">
+                                        <dt className="mb-1 font-semibold leading-none text-gray-900 dark:text-white">Observação</dt>
+                                        <dd className="mb-2 font-light text-gray-500 sm:mb-3 dark:text-gray-400">{demandaSelecionada.observacao}</dd>
+                                    </div>
                                     { (userInfo.id !== demandaSelecionada.user.id) && (
-                                        <>
-                                            <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Usuário</dt>
-                                            <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{demandaSelecionada.user.nome}</dd>
-                                        </>  
+                                        <div>
+                                            <dt className="mb-1 font-semibold leading-none text-gray-900 dark:text-white">Usuário</dt>
+                                            <dd className="mb-2 font-light text-gray-500 sm:mb-3 dark:text-gray-400">{demandaSelecionada.user.nome}</dd>
+                                        </div>  
                                     )}
-                                    <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Quantidade de interessados</dt>
-                                    <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{demandaSelecionada.quantidadeInteressados}</dd>
+                                    <div>
+                                        <dt className="mb-1 font-semibold leading-none text-gray-900 dark:text-white">Quantidade de interessados</dt>
+                                        <dd className="mb-2 font-light text-gray-500 sm:mb-3 dark:text-gray-400">{demandaSelecionada.quantidadeInteressados}</dd>
+                                    </div>
                                     {demandaSelecionada.cidade.length > 0 && (
-                                        <>
-                                            <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Cidades</dt>
-                                            <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{cidadesString}</dd>
-                                        </>
+                                        <div className={demandaSelecionada.cidade.length > 2 && "col-span-2"}>
+                                            <dt className="mb-1 font-semibold leading-none text-gray-900 dark:text-white">Cidades</dt>
+                                            <dd className="mb-2 font-light text-gray-500 sm:mb-3 dark:text-gray-400">{cidadesString}</dd>
+                                        </div>
                                     )}
                                     {demandaSelecionada.comentario !== null && (
-                                        <>
-                                            <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Comentário</dt>
-                                            <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{demandaSelecionada.comentario}</dd>
-                                        </>
+                                        <div className="col-span-2">
+                                            <dt className="mb-1 font-semibold leading-none text-gray-900 dark:text-white">Comentário</dt>
+                                            <dd className="mb-2 font-light text-gray-500 sm:mb-3 dark:text-gray-400">{demandaSelecionada.comentario}</dd>
+                                        </div>
                                     )}
-                                    
-                                    <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Atividade Relacionada</dt>
-                                    <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{demandaSelecionada.atividade.titulo}</dd>
-                                    <dt className="mb-2 font-semibold leading-none text-gray-900 dark:text-white">Ultima alteração</dt>
-                                    <dd className="mb-4 font-light text-gray-500 sm:mb-5 dark:text-gray-400">{demandaSelecionada.updatedAt}</dd>
+                                    <div className="col-span-2">
+                                        <dt className="mb-1 font-semibold leading-none text-gray-900 dark:text-white">Atividade Relacionada</dt>
+                                        <dd className="mb-2 font-light text-gray-500 sm:mb-3 dark:text-gray-400">{demandaSelecionada.atividade.titulo}</dd>
+                                    </div>
+                                    <div>
+                                        <dt className="mb-1 font-semibold leading-none text-gray-900 dark:text-white">Data de inserção</dt>
+                                        <dd className="mb-2 font-light text-gray-500 sm:mb-3 dark:text-gray-400">{format(new Date(demandaSelecionada.createdAt), 'dd/MM/yyyy')}</dd>
+                                    </div>
                                 </dl>
                             )}
                             {userInfo && (

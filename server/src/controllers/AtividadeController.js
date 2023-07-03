@@ -203,14 +203,14 @@ class AtividadeController {
             return res.status(404).json({ error: 'Atividade not found.' });
         }
         
-        await atividade.update(dados); // Atualiza os dados da atividade
+        await atividade.update(dados); 
         
         if (cidade && cidade.length > 0) {
-            await atividade.setCidade(cidade); // Atualiza a relação com as cidades
+            await atividade.setCidade(cidade);
         }
 
         if (sugerida && sugerida.length > 0) {
-            await atividade.setSugerida(sugerida); // Atualiza a relação com as demandas sugeridas
+            await atividade.setSugerida(sugerida);
         }
         
         return res.send();

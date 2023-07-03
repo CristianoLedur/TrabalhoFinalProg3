@@ -39,9 +39,7 @@ export default function Demandas() {
                 }
             });
             const data = await response.json();
-            console.log(data);
             setDemandaSelecionada(data);
-            console.log(demandaSelecionada);
             openModal();
         } catch (error) {
             console.log('Ocorreu um erro ao buscar os detalhes da atividade:', error);

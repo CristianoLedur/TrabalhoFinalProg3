@@ -3,13 +3,13 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { APP_ROUTES } from '../constants/app-routes';
 
-const checkUserAuthenticated = () => {
-  const dataString = sessionStorage.getItem('user');
-  return !!dataString;
-};
-
 export default function PrivateRoute({ children }) {
   const { push } = useRouter();
+
+  const checkUserAuthenticated = () => {
+    const dataString = sessionStorage.getItem('user');
+    return !!dataString;
+  };
 
   const isUserAuthenticated = checkUserAuthenticated();
 

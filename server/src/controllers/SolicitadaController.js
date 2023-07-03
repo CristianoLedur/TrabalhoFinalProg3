@@ -182,10 +182,10 @@ class SolicitadaController {
             return res.status(404).json({ error: 'Demanda not found.' });
         }
         
-        await demanda.update(dados); // Atualiza os dados da demanda
+        await demanda.update(dados); 
         
         if (cidade && cidade.length > 0) {
-            await demanda.setCidade(cidade); // Atualiza a relação com as cidades
+            await demanda.setCidade(cidade); 
         }
 
         return res.send();

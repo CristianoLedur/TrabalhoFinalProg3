@@ -9,10 +9,9 @@ export const UserProvider = ({ children }) => {
     
     
     useEffect(() => {
-        console.log(typeof(userInfo));
         const dataString = sessionStorage.getItem('user');
         setUserInfo(JSON.parse(dataString));
-        console.log(typeof(userInfo));
+
     }, []);
 
     return (

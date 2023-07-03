@@ -13,11 +13,9 @@ export default function ExcluirAtiviade({ atividadeSelecionada, closeModal }) {
             });
 
             setTimeout(() => {
-                closeModal();
+                window.location.reload();
             }, 1000);
 
-            // posso apresentar uma mensagem de sucesso na tela
-            
         } catch (error) {
             console.log(error);
         }

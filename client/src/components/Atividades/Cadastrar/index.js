@@ -59,12 +59,10 @@ export default function CadastrarAtiviade({ closeModal }) {
     }, []);
 
     const handleSubmitData = async (dataForm) => {
-        console.log(dataForm);
         dataForm.cidade = dataForm.cidade
             .filter((element) => typeof(element) === "string")
             .map((element) => parseInt(element));
         dataForm.userId = userInfo.id;
-        console.log(dataForm);
         const token = getCookie('Authorization');
         try {
             const response = await fetch('http://localhost:3001/atividade', {
@@ -78,12 +76,10 @@ export default function CadastrarAtiviade({ closeModal }) {
 
             const data = await response.json();
 
-            // setTimeout(() => {
-            //     closeModal();
-            // }, 1000);
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
 
-            // posso apresentar uma mensagem de sucesso na tela
-            
         } catch (error) {
             setAtividadeCadastrada('Você já sugeriu uma atividade com este título');
             console.log(error);
@@ -93,9 +89,7 @@ export default function CadastrarAtiviade({ closeModal }) {
     return (
         <div id="defaultModal" tabIndex="-1" aria-hidden="true" className="flex overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full bg-gray-700/50">
             <div className="relative p-4 w-full max-w-2xl h-full md:h-auto">
-                {/* <!-- Modal content --> */}
                 <div className="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
-                    {/* <!-- Modal header --> */}
                     <div className="flex justify-between items-center pb-4 mb-4 rounded-t border-b sm:mb-5 dark:border-gray-600">
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                             Cadastrar Atividade
@@ -107,7 +101,7 @@ export default function CadastrarAtiviade({ closeModal }) {
                             <span className="sr-only">Close modal</span>
                         </button>
                     </div>
-                    {/* <!-- Modal body --> */}
+
                     <form 
                         onSubmit={handleSubmit(handleSubmitData)}
                         method="POST"

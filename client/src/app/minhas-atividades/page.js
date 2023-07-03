@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { getCookie } from "cookies-next";
 import { useUserContext } from '../../context/user/UserContext';
+import { format } from 'date-fns';
 import ListarAtividades from '../../components/Atividades/Listar';
 import VerAtividades from '../../components/Atividades/Ver';
 import EditarAtividades from '../../components/Atividades/Editar';
@@ -55,6 +56,7 @@ export default function MinhasAtividades() {
     };
 
     useEffect(() => {
+        setIsLoading(true);
         closeModal();
         const fetchAtividades = async () => {
             try {
@@ -68,6 +70,8 @@ export default function MinhasAtividades() {
                 setBackendData(user[0].atividade);
             } catch (error) {
                 console.log(error);
+            } finally {
+                setIsLoading(false);
             }
         };
         fetchAtividades();

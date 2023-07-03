@@ -9,10 +9,10 @@ import SolicitarAtividades from '../../components/Atividades/Solicitar';
 import SugerirAtividade from '../../components/Atividades/Sugerir';
 
 export default function Atividades() {
-    const [backendData, setBackendData] = useState([{}]);
+    const [backendData, setBackendData] = useState([]);
     const [atividadeSelecionada, setAtividadeSelecionada] = useState(null);
+    const [scrollAtivo, setScrollAtivo] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
-    const CRUD = false; // esta sendo utilizado?
     const [ solicitandoAtividade, setSolicitandoAtividade ] = useState(false);
     const [modalStates, setModalStates] = useState({
         read: false,
@@ -38,6 +38,12 @@ export default function Atividades() {
     const handleButtonSugerir = () => {
         setSolicitandoAtividade(!solicitandoAtividade);
     }
+
+    
+
+    const toggleScroll = () => {
+        setScrollAtivo(!scrollAtivo);
+    };
 
     const fetchAtividade = async (itemId) => {
         setIsLoading(true);

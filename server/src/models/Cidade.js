@@ -41,5 +41,3 @@ class Cidade extends Model {
 }
 
 export default Cidade;
-
-/* Qual a relação do "static e init" com a classe Database (do arquivo index.js)? */

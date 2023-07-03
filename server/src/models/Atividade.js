@@ -21,10 +21,8 @@ class Atividade extends Model {
     }
 
     static associate(models) {
-        /* Relacionar com o usuário que cadastrou */
         this.belongsTo(models.User, {foreignKey: 'userId', as: 'user'});
 
-        /* Relacionar com zero ou várias cidades */ 
         this.belongsToMany(models.Cidade, {
             through: 'atividadecidade',
             foreignKey: 'atividadeId',
